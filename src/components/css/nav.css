@@ -1,0 +1,13 @@
+.navbar {
+  background-color: #5367ff;
+  padding: 1rem;
+  position: fixed;
+  height: 60px;
+  width: 100%;
+  z-index: 102;
+}
+
+.link-top-active {
+  background-color: #0b6cec;
+}
+/*# sourceMappingURL=nav.css.map */

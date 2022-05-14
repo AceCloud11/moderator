@@ -1,0 +1,22 @@
+.navbar{
+    background-color: #1b2142;
+    padding: 1rem;
+    position: fixed;
+    height: 60px;
+    width: 100%;
+    z-index: 102;
+    
+    // ul{
+    //     @media screen and (max-width: 768px) {
+    //         position: absolute;
+    //         display: block;
+    //         width: 300px;
+    //         background-color: #1b2142;
+    //     }
+    // }
+}
+
+
+.link-top-active{
+    background-color: rgb(11, 108, 236);
+}

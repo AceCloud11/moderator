@@ -1,0 +1,22 @@
+.leftnav{
+    left: 0px;
+
+    @media screen and (max-width: 1220px){
+        left: -300px;
+    }
+}
+
+.leftnav-desktop{
+   left: 0px;
+}
+.leftnav-mobile{
+   left: -300px;
+}
+
+.main-section{
+
+    @media screen and (max-width: 1220px){
+        padding-top: 3rem;
+    }
+    
+}

@@ -1,0 +1,9 @@
+.post-image{
+  width: 350px;
+  height: 450px;
+  border-radius: 5px;
+
+  @media screen and (max-width: 760px) {
+      width: 100%;
+  }
+}
