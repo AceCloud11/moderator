@@ -23,7 +23,7 @@ export default function Chat() {
 
   const fetchProfile = async () => {
     await axios
-      .get("/profile", {
+      .get("moderator/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-type": "application/json",

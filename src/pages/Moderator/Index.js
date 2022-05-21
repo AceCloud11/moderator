@@ -1,5 +1,5 @@
-import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react';
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
 import {
   BarChart,
   CartesianGrid,
@@ -14,14 +14,14 @@ import {
   Cell,
   ResponsiveContainer,
 } from "recharts";
-import UserContext from '../../Context/UserContext';
+import UserContext from "../../Context/UserContext";
 export default function Index() {
-
-   
   const { role, token } = useContext(UserContext);
 
   const [dashbaord, setDashbaord] = useState({});
 
+  
+  // get the hosts
   const getDashboard = async () => {
     axios({
       url: "/moderator/dashboard",
@@ -35,12 +35,13 @@ export default function Index() {
     })
       .then(async (res) => {
         await setDashbaord(res.data);
-        
+        // console.log(res.data);
       })
       .catch((error) => {
         console.log(error);
       });
   };
+
 
   useEffect(() => {
     getDashboard();
@@ -48,96 +49,26 @@ export default function Index() {
     return () => {};
   }, []);
 
-  const data = [
-    {
-      name: "Janvier",
-      vues: 4000,
-    },
-    {
-      name: "Février",
-      vues: 3000,
-    },
-    {
-      name: "Mars",
-      vues: 500,
-    },
-    {
-      name: "Avril",
-      vues: 1200,
-    },
-    {
-      name: "Mai",
-      vues: 5600,
-    },
-    {
-      name: "Juin",
-      vues: 9000,
-    },
-    {
-      name: "Juillet",
-      vues: 400,
-    },
-    {
-      name: "Août",
-      vues: 4090,
-    },
-    {
-      name: "September",
-      vues: 8000,
-    },
-    {
-      name: "Octobre",
-      vues: 4000,
-    },
-    {
-      name: "Novembre",
-      vues: 4000,
-    },
-    {
-      name: "Décembre",
-      vues: 4000,
-    },
-  ];
+  const data = dashbaord.views
+    ? dashbaord.views.map((el) => {
+        return {
+          short_name: el.title.split(" ")[0],
+          name: el.title.split(" ")[0],
+          vues: el.views_count,
+        };
+      })
+    : [];
 
-  const data2 = [
-    {
-      name: "Movie 1",
-      vues: 4000,
-    },
-    {
-      name: "Movie 2",
-      vues: 3000,
-    },
-    {
-      name: "Movie 3",
-      vues: 500,
-    },
-    {
-      name: "Movie 4",
-      vues: 1200,
-    },
-  ];
+    
 
-  const data01 = [
-    { name: "Group A", value: 400 },
-    { name: "Group B", value: 300 },
-    { name: "Group C", value: 300 },
-    { name: "Group D", value: 200 },
-  ];
-  const data02 = [
-    { name: "A1", value: 100 },
-    { name: "A2", value: 300 },
-    { name: "B1", value: 100 },
-    { name: "B2", value: 80 },
-    { name: "B3", value: 40 },
-    { name: "B4", value: 30 },
-    { name: "B5", value: 50 },
-    { name: "C1", value: 100 },
-    { name: "C2", value: 200 },
-    { name: "D1", value: 150 },
-    { name: "D2", value: 50 },
-  ];
+  const data2 = dashbaord.favs ? dashbaord.favs.map((el) => {
+    return {
+      name: el.title.split("-")[0],
+      vues: el.total_favourites,
+    };
+  }): [];
 
+  
 
   return (
     <>
@@ -182,14 +113,18 @@ export default function Index() {
         {/* Users Count Card */}
         <div className="bg-purple-600 text-white p-4 rounded-md shadow-md flex justify-between">
           <h3 className="font-semibold">Utilisateurs bannis</h3>
-          <span className="font-bold text-gray-200">{dashbaord.bannedUsers}</span>
+          <span className="font-bold text-gray-200">
+            {dashbaord.bannedUsers}
+          </span>
         </div>
         {/* End Users Count */}
 
         {/* Users Count Card */}
         <div className="bg-purple-900 text-white p-4 rounded-md shadow-md flex justify-between">
           <h3 className="font-semibold">Utilisateurs premium</h3>
-          <span className="font-bold text-gray-200">{dashbaord.premiumUsers}</span>
+          <span className="font-bold text-gray-200">
+            {dashbaord.premiumUsers}
+          </span>
         </div>
         {/* End Users Count */}
 
@@ -228,24 +163,37 @@ export default function Index() {
         </div>
         {/* End Reports Count */}
       </div>
+      {/* <h1 className="text-2xl font-bold my-8">Top 5 des films les plus vus</h1>
+      <section className="space-y-4">
+        {dashbaord.views
+          ? dashbaord.views.map((el) => (
+              <article className="flex justify-between p-2 bg-indigo-400 rounded-md text-white">
+                <span>{el.title}</span>
+                <span>{el.views_count}</span>
+              </article>
+            ))
+          : null}
+      </section> */}
 
-      <section className="grid grid-cols-1 xl:grid-cols-2">
-        <div className="bg-white mt-12 overflow-auto no-scrollbar">
-          <h1 className="font-bold my-4 text-center text-lg">Vues par mois</h1>
+      <section className="grid grid-cols-1 xl:grid-cols-1">
+        {/* <div className="bg-white mt-12 overflow-auto no-scrollbar">
+          <h1 className="font-bold my-4 text-center text-lg">
+            Films les plus favoris
+          </h1>
           <BarChart width={730} height={350} data={data} className="bg-white">
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
             <Legend />
-            {/* <Bar dataKey="pv" fill="#8884d8" /> */}
-            <Bar dataKey="vues" fill="#82ca9d" />
+            {/* <Bar dataKey="pv" fill="#8884d8" /> 
+            <Bar dataKey="vues" fill="#8884d8" />
           </BarChart>
-        </div>
+        </div> */}
 
         <div className="bg-white mt-12 overflow-auto no-scrollbar">
           <h1 className="font-bold my-4 text-center text-lg">
-            Films les plus regardés
+            Films les plus favoris
           </h1>
           <BarChart width={730} height={350} data={data2} className="bg-white">
             <CartesianGrid strokeDasharray="3 3" />
@@ -256,32 +204,6 @@ export default function Index() {
             {/* <Bar dataKey="pv" fill="#8884d8" /> */}
             <Bar dataKey="vues" fill="#8884d8" />
           </BarChart>
-        </div>
-
-        <div className="bg-white mt-12 overflow-auto no-scrollbar">
-          <h1 className="font-bold my-4 text-center text-lg">
-            Films les plus regardés
-          </h1>
-          <PieChart width={730} height={400}>
-            <Pie
-              data={data01}
-              dataKey="value"
-              cx="50%"
-              cy="50%"
-              outerRadius={60}
-              fill="#8884d8"
-            />
-            <Pie
-              data={data02}
-              dataKey="value"
-              cx="50%"
-              cy="50%"
-              innerRadius={70}
-              outerRadius={90}
-              fill="#82ca9d"
-              label
-            />
-          </PieChart>
         </div>
       </section>
     </>

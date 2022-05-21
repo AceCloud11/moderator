@@ -25,6 +25,7 @@ import axios from "axios";
 import Sources from "./movies/Sources";
 import Banners from "./banner/Banners";
 import Cookies from "js-cookie";
+import Profile from "./profile/Profile";
 
 export default function Dashboard() {
   
@@ -77,7 +78,7 @@ export default function Dashboard() {
                       className="absolute bg-gray-800 text-white right-0 w-60  p-3 overflow-auto z-30 hidden"
                     >
                       <a
-                        href="/profile"
+                      href="/moderator/profile"
                         className="p-2 hover:bg-gray-800 text-white text-sm no-underline hover:no-underline block w-100"
                       >
                         <i className="fa fa-user fa-fw"></i> Profil
@@ -308,6 +309,10 @@ export default function Dashboard() {
             {/* Banners Routes */}
             <Route path="/moderator/banners">
               <Banners />
+            </Route>
+
+            <Route exact path="/moderator/profile">
+              <Profile />
             </Route>
 
             <Route exact path="/moderator">

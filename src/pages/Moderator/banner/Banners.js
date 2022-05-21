@@ -87,7 +87,7 @@ export default function Banners() {
         if (res.data.message) {
           toast.success(res.data.message);
           setBanner("");
-          setLink();
+          setLink("");
           onCloseEdit();
           fetchBanners();
         } else {

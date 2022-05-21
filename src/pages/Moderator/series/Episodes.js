@@ -16,6 +16,7 @@ import {
   Button,
   useToast,
 } from "@chakra-ui/react";
+import Hosts from "../../../components/Hosts";
 
 export default function Episodes() {
   const { token } = useContext(UserContext);
@@ -28,6 +29,7 @@ export default function Episodes() {
   const [src, setSrc] = useState("");
   const [epId, setEpId] = useState("");
   const [eps, setEps] = useState([]);
+  const [hosts, setHosts] = useState([]);
 
   let { serieId } = useParams();
 
@@ -81,10 +83,25 @@ export default function Episodes() {
   const createEpisode = async (e) => {
     // console.log(episodes);
     e.preventDefault();
+    if (!src.includes("http://") && !src.includes("https://")) {
+      await setErrors((old) => [...old, "veuillez entrer un lien valide"]);
+      // setSrc("");
+      return;
+    }
+
+    // extract name from the url
+    let n = src.split("//")[1].split(".")[0];
+
+    if (!hosts.includes(n)) {
+      await setErrors((old) => [...old, `la source ${n} n'est pas autorisée`]);
+      return;
+    }
+
     const data = {
       num: parseInt(num),
       vf: vf,
       src: src,
+      name: n
     };
 
     setErrors([]);
@@ -128,10 +145,25 @@ export default function Episodes() {
 
   //   update episode
   const updateEpisode = async () => {
+    if (!src.includes("http://") && !src.includes("https://")) {
+      await setErrors((old) => [...old, "veuillez entrer un lien valide"]);
+      // setSrc("");
+      return;
+    }
+
+    // extract name from the url
+    let n = src.split("//")[1].split(".")[0];
+
+    if (!hosts.includes(n)) {
+      await setErrors((old) => [...old, `la source ${n} n'est pas autorisée`]);
+      return;
+    }
+
     const data = {
       num: parseInt(num),
       vf: vf,
       src: src,
+      name: n,
     };
 
     setErrors([]);
@@ -217,7 +249,7 @@ export default function Episodes() {
   useEffect(async () => {
     await fetchEpisodes();
     setEps(fillNumbers());
-
+    setHosts(['evoload', 'mystream', 'doodstream', 'upload'])
     // console.log(eps);
 
     return () => {};
@@ -248,6 +280,9 @@ export default function Episodes() {
               <th scope="col" className="px-6 py-3">
                 Numéro d'épisode
               </th>
+              <th scope="col" className="px-6 py-3">
+                Nom d'épisode
+              </th>
 
               <th scope="col" className="p-4">
                 SOURCE
@@ -275,6 +310,12 @@ export default function Episodes() {
                     >
                       {ep.num}
                     </th>
+                    <th
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                    >
+                      {ep.name}
+                    </th>
                     <td className="w-4 p-4 text-gray-900">{ep.src}</td>
                     <td className="w-4 p-4 text-gray-900">
                       {ep.vf == 1 ? "Yes" : "No"}
@@ -288,6 +329,7 @@ export default function Episodes() {
                           setNum(ep.num);
                           setSrc(ep.src);
                           setEpId(ep.id);
+                          setErrors([]);
                           if (ep.vf == true) {
                             setVf(true);
                           }
@@ -317,6 +359,7 @@ export default function Episodes() {
           onCloseCreate();
           await setSrc("");
           await setNum("");
+          setErrors([]);
           await setVf(false);
         }}
       >
@@ -371,6 +414,7 @@ export default function Episodes() {
                     onChange={(e) => setSrc(e.target.value)}
                   />
                 </div>
+                <Hosts hosts={hosts}/>
                 <div className="space-y-4 my-4">
                   {errors.length
                     ? errors.map((error) => (
@@ -397,6 +441,7 @@ export default function Episodes() {
                 onCloseCreate();
                 await setSrc("");
                 await setNum("");
+                setErrors([]);
                 await setVf(false);
               }}
             >
@@ -416,6 +461,7 @@ export default function Episodes() {
           onCloseEdit();
           await setSrc("");
           await setNum("");
+          setErrors([]);
           await setVf(false);
         }}
       >
@@ -486,6 +532,7 @@ export default function Episodes() {
                 onCloseEdit();
                 await setSrc("");
                 await setNum("");
+                setErrors([]);
                 await setVf(false);
               }}
             >

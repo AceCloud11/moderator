@@ -30,15 +30,10 @@ export default function Register() {
       };
 
       axios
-        .post("http://192.168.3.7:8001/api/register", data)
+        .post("/register", data)
         .then((res) => {
-          if (res.data.message) {
-            setMsg((prev) => [...prev, res.data.message]);
-          } else {
-            // console.log(res.data);
-            // localStorage.setItem("token", res.data.token);
-            // localStorage.setItem("role", res.data.user.role);
-
+          console.log(res.data);
+          if (res.data.success) {
             Cookies.set("token", res.data.token, { expires: 5 });
             Cookies.set("role", res.data.user.role, { expires: 5 });
 
@@ -55,6 +50,11 @@ export default function Register() {
             setPassword("");
             setPasswordConfirmation("");
             setEmail("");
+          } else {
+            setMsg((prev) => [...prev, res.data.message]);
+
+            // localStorage.setItem("token", res.data.token);
+            // localStorage.setItem("role", res.data.user.role);
           }
         })
         .catch((err) => {
@@ -75,7 +75,7 @@ export default function Register() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-100 h-screen">
       <div className="container max-w-md mx-auto flex-1 flex flex-col items-center justify-center px-2">
         <div className="rounded shadow-md text-black w-full space-y-4 mt-8">
           <h1 className="mb-8 text-3xl text-center text-white">S'inscrire</h1>
@@ -129,6 +129,13 @@ export default function Register() {
           >
             Créer un compte
           </button>
+
+          <div className="flex gap-4 mt-4 items-center">
+            <p className="text-white">Vous avez déjà un compte?</p>
+            <a href="/register" className="text-blue-500 font-bold">
+              Se Connexion
+            </a>
+          </div>
         </div>
       </div>
     </div>

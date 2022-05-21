@@ -10,12 +10,13 @@ import {
   ModalCloseButton,
   Button,
   useDisclosure,
-  useToast,
+  useToast
 } from "@chakra-ui/react";
 import UserContext from "../../../Context/UserContext";
 import Pagination from "../../../components/Pagination";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Error from "../../../components/Error";
 
 export default function IndexActor() {
   const data = useContext(UserContext);
@@ -28,6 +29,7 @@ export default function IndexActor() {
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [errors, setErrors] = useState([]);
 
   const notify = (text) => toast.success(text);
 
@@ -37,13 +39,13 @@ export default function IndexActor() {
     }
     let pg = new URLSearchParams(window.location.search).get("page") || 1;
     await axios({
-      url: "/actors?page=" + pg,
+      url: "/moderator/actors?page=" + pg,
       method: "GET",
       responseType: "json",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        // Authorization: "Bearer " + this.state.token,
+        Authorization: "Bearer " + data.token,
       },
     })
       .then(async (res) => {
@@ -62,13 +64,13 @@ export default function IndexActor() {
     }
     let pg = new URLSearchParams(window.location.search).get("page") || 1;
      await axios({
-       url: "/actors?search=" + search + "&page=" + pg,
+       url: "moderator/actors?search=" + search + "&page=" + pg,
        method: "GET",
        responseType: "json",
        headers: {
          "Content-Type": "application/json",
          Accept: "application/json",
-         // Authorization: "Bearer " + this.state.token,
+         Authorization: "Bearer " + data.token,
        },
      })
        .then(async (res) => {
@@ -107,12 +109,14 @@ export default function IndexActor() {
         //   console.log(res.data);
         await setActorNew("");
         onCloseCreate();
+        setErrors([]);
+        setActorNew('');
         fetchActors(1);
 
         notify(res.data.message);
       })
       .catch((error) => {
-        console.log(error);
+        setErrors(old => [...old, error.response.data.message]);
       });
   };
 
@@ -134,12 +138,13 @@ export default function IndexActor() {
         //   console.log(res.data);
         await setActor("");
         await setActorId("");
+        setErrors([]);
         onCloseEdit();
         await fetchActors(1);
         notify(res.data.message);
       })
       .catch((error) => {
-        console.log(error);
+        setErrors((old) => [...old, error.response.data.message]);
       });
   };
 
@@ -311,7 +316,14 @@ export default function IndexActor() {
         </table>
       </div>
 
-      <Modal isOpen={isOpenCreate} onClose={onCloseCreate}>
+      <Modal
+        isOpen={isOpenCreate}
+        onClose={() => {
+          onCloseCreate();
+          setErrors([]);
+          setActorNew("");
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Créer une nouvelle acteur</ModalHeader>
@@ -326,10 +338,19 @@ export default function IndexActor() {
                 className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
               />
             </div>
+            <Error errors={errors} />
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onCloseCreate}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                onCloseCreate();
+                setErrors([]);
+                setActorNew("");
+              }}
+            >
               Fermer
             </Button>
             <Button colorScheme="teal" onClick={createActor}>
@@ -339,7 +360,14 @@ export default function IndexActor() {
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isOpenEdit} onClose={onCloseEdit}>
+      <Modal
+        isOpen={isOpenEdit}
+        onClose={() => {
+          onCloseEdit();
+          setErrors([]);
+          setActor("");
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Mettre à jour</ModalHeader>
@@ -354,10 +382,19 @@ export default function IndexActor() {
                 className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
               />
             </div>
+            <Error errors={errors} />
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onCloseEdit}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                onCloseEdit();
+                setErrors([]);
+                setActor("");
+              }}
+            >
               Fermer
             </Button>
             <Button colorScheme="teal" onClick={updateActor}>

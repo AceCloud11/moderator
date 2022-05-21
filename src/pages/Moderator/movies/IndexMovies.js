@@ -206,7 +206,7 @@ export default class IndexMovies extends Component {
                   className="p-2 bg-blue-500 text-white font-bold rounded-md"
                   onClick={(e) => {
                     e.preventDefault();
-                    this.searchMovies();
+                    this.searchMovies(1);
                   }}
                 >
                   Recherche

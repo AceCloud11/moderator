@@ -16,6 +16,7 @@ import UserContext from "../../../Context/UserContext";
 import Pagination from "../../../components/Pagination";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Error from "../../../components/Error";
 
 export default function IndexActor() {
   const data = useContext(UserContext);
@@ -27,9 +28,10 @@ export default function IndexActor() {
   const [directorNew, setDirectorNew] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-   const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("");
+  const [errors, setErrors] = useState([]);
 
-    const notify = (text) => toast.success(text);
+  const notify = (text) => toast.success(text);
 
   const fetchDirectors = async (page) => {
     if (page !== 1) {
@@ -37,13 +39,13 @@ export default function IndexActor() {
     }
     let pg = new URLSearchParams(window.location.search).get("page") || 1;
     await axios({
-      url: "/directors?page=" + pg,
+      url: "moderator/directors?page=" + pg,
       method: "GET",
       responseType: "json",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        // Authorization: "Bearer " + this.state.token,
+        Authorization: "Bearer " + data.token,
       },
     })
       .then(async (res) => {
@@ -62,13 +64,13 @@ export default function IndexActor() {
     }
     let pg = new URLSearchParams(window.location.search).get("page") || 1;
     await axios({
-      url: "/actors?search=" + search + "&page=" + pg,
+      url: "moderator/directors?search=" + search + "&page=" + pg,
       method: "GET",
       responseType: "json",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        // Authorization: "Bearer " + this.state.token,
+        Authorization: "Bearer " + data.token,
       },
     })
       .then(async (res) => {
@@ -81,14 +83,13 @@ export default function IndexActor() {
       });
   };
 
-    const paginate = async (page) => {
-      if (search === "") {
-        await fetchDirectors(page);
-      } else {
-        await searchDirectors(page);
-      }
-    };
-    
+  const paginate = async (page) => {
+    if (search === "") {
+      await fetchDirectors(page);
+    } else {
+      await searchDirectors(page);
+    }
+  };
 
   const createDirector = async () => {
     axios({
@@ -105,9 +106,10 @@ export default function IndexActor() {
       },
     })
       .then(async (res) => {
-          // console.log(res.data);
+        // console.log(res.data);
         await setDirectorNew("");
         onCloseCreate();
+        setErrors([]);
         fetchDirectors(1);
         toast({
           title: res.data.message,
@@ -118,13 +120,7 @@ export default function IndexActor() {
         });
       })
       .catch((error) => {
-         toast({
-           title: error.response.data.message,
-           status: "error",
-           duration: 3000,
-           isClosable: true,
-           position: "top-right",
-         });
+        setErrors((old) => [...old, error.response.data.message]);
       });
   };
 
@@ -146,6 +142,7 @@ export default function IndexActor() {
         //   console.log(res.data);
         await setDirector("");
         await setDirectorId("");
+        setErrors([]);
         onCloseEdit();
         await fetchDirectors(1);
         toast({
@@ -157,13 +154,7 @@ export default function IndexActor() {
         });
       })
       .catch((error) => {
-        toast({
-          title: error.response.data.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-          position: "top-right",
-        });
+        setErrors((old) => [...old, error.response.data.message]);
       });
   };
 
@@ -194,13 +185,13 @@ export default function IndexActor() {
         });
       })
       .catch((error) => {
-         toast({
-           title: error.response.data.message,
-           status: "error",
-           duration: 3000,
-           isClosable: true,
-           position: "top-right",
-         });
+        toast({
+          title: error.response.data.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
       });
   };
 
@@ -250,7 +241,7 @@ export default function IndexActor() {
             >
               Recherche
             </button> */}
-            </div>
+          </div>
 
           <button
             className="block px-4 py-2 rounded-md bg-indigo-600 text-white"
@@ -347,7 +338,14 @@ export default function IndexActor() {
         </table>
       </div>
 
-      <Modal isOpen={isOpenCreate} onClose={onCloseCreate}>
+      <Modal
+        isOpen={isOpenCreate}
+        onClose={() => {
+          onCloseCreate();
+          setDirectorNew("");
+          setErrors([]);
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Créer une nouvelle directeur</ModalHeader>
@@ -362,10 +360,19 @@ export default function IndexActor() {
                 className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
               />
             </div>
+            <Error errors={errors} />
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onCloseCreate}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                onCloseCreate();
+                setDirectorNew("");
+                setErrors([]);
+              }}
+            >
               Fermer
             </Button>
             <Button colorScheme="teal" onClick={createDirector}>
@@ -375,7 +382,14 @@ export default function IndexActor() {
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isOpenEdit} onClose={onCloseEdit}>
+      <Modal
+        isOpen={isOpenEdit}
+        onClose={() => {
+          onCloseEdit();
+          setDirector("");
+          setErrors([]);
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Mettre à jour</ModalHeader>
@@ -390,10 +404,19 @@ export default function IndexActor() {
                 className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
               />
             </div>
+            <Error errors={errors} />
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onCloseEdit}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                onCloseEdit();
+                setDirector("");
+                setErrors([]);
+              }}
+            >
               Fermer
             </Button>
             <Button colorScheme="teal" onClick={updateDirector}>

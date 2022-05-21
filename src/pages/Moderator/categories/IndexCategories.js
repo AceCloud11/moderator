@@ -1,5 +1,5 @@
-import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react'
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -9,134 +9,141 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
-import UserContext from '../../../Context/UserContext';
+import UserContext from "../../../Context/UserContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Error from "../../../components/Error";
 
 export default function IndexCategories() {
-    const data = useContext(UserContext);
+  const data = useContext(UserContext);
 
-    
+  const [cats, setCats] = useState([]);
+  const [category, setCategory] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [categoryNew, setCategoryNew] = useState("");
+  const [errors, setErrors] = useState([]);
 
-    const [cats, setCats] = useState([]);
-    const [category, setCategory] = useState('');
-    const [categoryId, setCategoryId] = useState('');
-    const [categoryNew, setCategoryNew] = useState('');
+  const notify = (text) => toast.success(text);
 
-    const notify = (text) => toast.success(text);
-
-    const fetchCats = async () => {
-      await axios({
-        url: "/categories",
-        method: "GET",
-        responseType: "json",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          // Authorization: "Bearer " + this.state.token,
-        },
-      })
-        .then(async (res) => {
-          await setCats(res.data)
+  const fetchCats = async () => {
+    await axios({
+      url: "moderator/categories",
+      method: "GET",
+      responseType: "json",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Bearer " + data.token,
+      },
+    })
+      .then(async (res) => {
+        await setCats(res.data);
         //   console.log(cats);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    };
-
-    const createCategory = async () => {
-        axios({
-          url: '/moderator/categories',
-          method: "post",
-          responseType: "json",
-          data: {
-              'name': categoryNew
-          },
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: "Bearer " + data.token,
-          },
-        })
-          .then(async (res) => {
-            //   console.log(res.data);
-            await setCategoryNew('');
-            onCloseCreate();
-            fetchCats();
-            notify(res.data.message);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-    }
-
-    const updateCategory = async () => {
-        axios({
-          url: '/moderator/categories/' + categoryId,
-          method: "put",
-          responseType: "json",
-          data: {
-              'name': category
-          },
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: "Bearer " + data.token,
-          },
-        })
-          .then(async (res) => {
-            //   console.log(res.data);
-            await setCategory('');
-            await setCategoryId('');
-            onCloseEdit();
-            fetchCats();
-            notify(res.data.message);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-    }
-
-    const deleteCategory = async (id) => {
-      axios({
-        url: "/moderator/categories/" + id,
-        method: "delete",
-        responseType: "json",
-        data: {
-          name: category,
-        },
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: "Bearer " + data.token,
-        },
       })
-        .then(async (res) => {
-          fetchCats();
-          notify(res.data.message);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
-  
-    useEffect( async () => {
-      await fetchCats();
-    
-      return () => {
-        
-      }
-    }, [])
+  const createCategory = async () => {
+    axios({
+      url: "/moderator/categories",
+      method: "post",
+      responseType: "json",
+      data: {
+        name: categoryNew,
+      },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Bearer " + data.token,
+      },
+    })
+      .then(async (res) => {
+        //   console.log(res.data);
+        await setCategoryNew("");
+        onCloseCreate();
+        setErrors([]);
+        fetchCats();
+        notify(res.data.message);
+      })
+      .catch((error) => {
+        setErrors((old) => [...old, error.response.data.message]);
+      });
+  };
 
-    // const { isOpenCreate, onOpenCreate, onCloseCreate } = useDisclosure();
-    // const { isOpenEedit, onOpenEedit, onCloseEedit } = useDisclosure();
-    const { isOpen:isOpenCreate, onOpen: onOpenCreate, onClose: onCloseCreate } = useDisclosure();
-    const { isOpen:isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
-    
+  const updateCategory = async () => {
+    axios({
+      url: "/moderator/categories/" + categoryId,
+      method: "put",
+      responseType: "json",
+      data: {
+        name: category,
+      },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Bearer " + data.token,
+      },
+    })
+      .then(async (res) => {
+        //   console.log(res.data);
+        await setCategory("");
+        await setCategoryId("");
+        onCloseEdit();
+        setErrors([]);
+        fetchCats();
+        notify(res.data.message);
+      })
+      .catch((error) => {
+        setErrors((old) => [...old, error.response.data.message]);
+      });
+  };
+
+  const deleteCategory = async (id) => {
+    axios({
+      url: "/moderator/categories/" + id,
+      method: "delete",
+      responseType: "json",
+      data: {
+        name: category,
+      },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Bearer " + data.token,
+      },
+    })
+      .then(async (res) => {
+        fetchCats();
+        notify(res.data.message);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(async () => {
+    await fetchCats();
+
+    return () => {};
+  }, []);
+
+  // const { isOpenCreate, onOpenCreate, onCloseCreate } = useDisclosure();
+  // const { isOpenEedit, onOpenEedit, onCloseEedit } = useDisclosure();
+  const {
+    isOpen: isOpenCreate,
+    onOpen: onOpenCreate,
+    onClose: onCloseCreate,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure();
+
   return (
     <div className="w-full">
       <ToastContainer />
@@ -226,7 +233,14 @@ export default function IndexCategories() {
         </table>
       </div>
 
-      <Modal isOpen={isOpenCreate} onClose={onCloseCreate}>
+      <Modal
+        isOpen={isOpenCreate}
+        onClose={() => {
+          onCloseCreate();
+          setCategoryNew("");
+          setErrors([]);
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Créer une nouvelle catégorie</ModalHeader>
@@ -238,13 +252,23 @@ export default function IndexCategories() {
                 value={categoryNew}
                 onChange={(e) => setCategoryNew(e.target.value)}
                 placeholder="Nom"
+                autoFocus={true}
                 className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
               />
             </div>
+            <Error errors={errors} />
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onCloseCreate}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                onCloseCreate();
+                setCategoryNew("");
+                setErrors([]);
+              }}
+            >
               Fermer
             </Button>
             <Button colorScheme="teal" onClick={createCategory}>
@@ -254,7 +278,14 @@ export default function IndexCategories() {
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isOpenEdit} onClose={onCloseEdit}>
+      <Modal
+        isOpen={isOpenEdit}
+        onClose={() => {
+          onCloseEdit();
+          setCategory("");
+          setErrors([]);
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Mettre à jour la catégorie</ModalHeader>
@@ -266,13 +297,23 @@ export default function IndexCategories() {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="Nom"
+                autoFocus={true}
                 className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
               />
             </div>
+            <Error errors={errors} />
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onCloseEdit}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                onCloseEdit();
+                setCategory("");
+                setErrors([]);
+              }}
+            >
               Fermer
             </Button>
             <Button colorScheme="teal" onClick={updateCategory}>

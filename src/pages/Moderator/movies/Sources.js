@@ -18,14 +18,16 @@ import {
   Alert,
   AlertIcon,
 } from "@chakra-ui/react";
+import Hosts from "../../../components/Hosts";
 
 export default function Sources() {
   const [sources, setSources] = useState([]);
   const [title, setTitle] = useState("");
-  const [name, setName] = useState('');
-  const [src, setSrc] = useState('');
+  const [name, setName] = useState("");
+  const [src, setSrc] = useState("");
   const [errors, setErrors] = useState([]);
   const [srcId, setSrcId] = useState(null);
+  const [hosts, setHosts] = useState([]);
 
   const { token } = useContext(UserContext);
 
@@ -51,20 +53,37 @@ export default function Sources() {
       });
   };
 
+
   const addSources = async () => {
-      setErrors([]);
-    if (name === '' || src === '') {
-        setErrors((old) => [...old, "Tout les champs est obligatoire"]);
+    await setErrors([]);
+    if (src === "") {
+      await setErrors((old) => [...old, "Tout les champs sont obligatoire"]);
       return;
     }
 
+    // check if the link provided is valid
+    if (!src.includes("http://") && !src.includes("https://")) {
+      await setErrors((old) => [...old, "veuillez entrer un lien valide"]);
+      // setSrc("");
+      return;
+    }
+
+    // extract name from the url 
+    let n = src.split("//")[1].split("/")[0];
+
+    if (!hosts.includes(n)) {
+      await setErrors((old) => [...old, `la source ${n} n'est pas autorisée`]);
+      return;
+    }
+
+    
     await axios({
       url: "/moderator/movie-sources/" + id,
       method: "post",
       responseType: "json",
       data: {
-        name,
-        src
+        name: n,
+        src,
       },
       headers: {
         "Content-Type": "application/json",
@@ -74,75 +93,114 @@ export default function Sources() {
     })
       .then(async (response) => {
         toast.success(response.data.message);
-       setSrc('');
-       setErrors([]);
-       setName('');
-       onCloseCreate();
-       fetchSources();
+        setSrc("");
+        setErrors([]);
+        setName("");
+        onCloseCreate();
+        fetchSources();
       })
       .catch((error) => {
         toast.error(error.response.data.message);
       });
   };
 
-const updateSources = async () => {
+  const updateSources = async () => {
     setErrors([]);
     if (name === "" || src === "") {
-    setErrors((old) => [...old, "Tout les champs est obligatoire"]);
-    return;
+      setErrors((old) => [...old, "Tout les champs est obligatoire"]);
+      return;
+    }
+
+    if (!src.includes("http://") && !src.includes("https://")) {
+      await setErrors((old) => [...old, "veuillez entrer un lien valide"]);
+      // setSrc("");
+      return;
+    }
+
+    // extract name from the url
+    let n = src.split("//")[1].split("/")[0];
+    
+    if (!hosts.includes(n)) {
+      await setErrors((old) => [...old, `la source ${n} n'est pas autorisée`]);
+      return;
     }
 
     await axios({
-    url: "/moderator/movie-sources/" + srcId,
-    method: "put",
-    responseType: "json",
-    data: {
+      url: "/moderator/movie-sources/" + srcId,
+      method: "put",
+      responseType: "json",
+      data: {
         name,
         src,
-    },
-    headers: {
+      },
+      headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
         Authorization: "Bearer " + token,
-    },
+      },
     })
-    .then(async (response) => {
+      .then(async (response) => {
         toast.success(response.data.message);
         setSrc("");
         setErrors([]);
         setName("");
         onCloseEdit();
         fetchSources();
-    })
-    .catch((error) => {
+      })
+      .catch((error) => {
         toast.error(error.response.data.message);
-    });
-};
+      });
+  };
 
-const deleteSources = async (srcid) => {
-  await axios({
-    url: "/moderator/movie-sources/" + srcid,
-    method: "delete",
-    responseType: "json",
-    data: {
-      name,
-      src,
-    },
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + token,
-    },
-  })
-    .then(async (response) => {
-      toast.success(response.data.message);
-      fetchSources();
+  const deleteSources = async (srcid) => {
+    await axios({
+      url: "/moderator/movie-sources/" + srcid,
+      method: "delete",
+      responseType: "json",
+      data: {
+        name,
+        src,
+      },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
     })
-    .catch((error) => {
-      toast.error(error.response.data.message);
-    });
-};
+      .then(async (response) => {
+        toast.success(response.data.message);
+        fetchSources();
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
 
+  async function customSetState(setValue, value) {
+     setValue(value);
+  }
+
+  const getHosts = async () => {
+    axios({
+      url: "/moderator/hosts",
+      method: "GET",
+      responseType: "json",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then(async (res) => {
+        // await setDashbaord(res.data);
+        setHosts(res.data.map(el => el.domain_name));
+
+        // console.log(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
 
   const {
@@ -158,9 +216,11 @@ const deleteSources = async (srcid) => {
 
   useEffect(() => {
     fetchSources();
+    // setHosts(["evoload", "mystream", "doodstream", "upload"]);
+    getHosts();
 
     return () => {};
-  }, []);
+  }, []); 
 
   return (
     <div className="w-full">
@@ -255,19 +315,19 @@ const deleteSources = async (srcid) => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Source</ModalHeader>
+          <ModalHeader>Lecteur</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <div>
               <form action="" className="space-y-4">
                 <div className="flex gap-4 flex-wrap">
-                  <input
+                  {/* <input
                     type="text"
                     placeholder="Nom du lecteur"
                     className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                  />
+                  /> */}
                   <input
                     type="text"
                     placeholder="lien"
@@ -275,6 +335,7 @@ const deleteSources = async (srcid) => {
                     value={src}
                     onChange={(e) => setSrc(e.target.value)}
                   />
+                  <Hosts hosts={hosts} />
                 </div>
 
                 <div className="space-y-4 my-4">
@@ -303,6 +364,7 @@ const deleteSources = async (srcid) => {
                 onCloseCreate();
                 await setSrc("");
                 await setName("");
+                setErrors([]);
               }}
             >
               Close
@@ -334,6 +396,7 @@ const deleteSources = async (srcid) => {
                     placeholder="Nom"
                     className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
                     value={name}
+                    readOnly
                     onChange={(e) => setName(e.target.value)}
                   />
                   <input
@@ -343,6 +406,8 @@ const deleteSources = async (srcid) => {
                     value={src}
                     onChange={(e) => setSrc(e.target.value)}
                   />
+
+                  <Hosts hosts={hosts} />
                 </div>
 
                 <div className="space-y-4 my-4">
@@ -369,8 +434,8 @@ const deleteSources = async (srcid) => {
               mr={3}
               onClick={async () => {
                 onCloseEdit();
-                setName('');
-                setSrc('');
+                setName("");
+                setSrc("");
                 setSrcId(null);
               }}
             >

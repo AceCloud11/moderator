@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { act } from "react-dom/test-utils";
 import { withRouter } from "react-router-dom";
 import UserContext from "../../../Context/UserContext";
+import Error from '../../../components/Error';
 
 class Edit extends Component {
   static contextType = UserContext;
@@ -11,7 +12,7 @@ class Edit extends Component {
     super(props);
     this.state = {
       suggestions: [],
-      id: '',
+      id: "",
       page: 1,
       totalPages: 1,
       duration: "",
@@ -21,48 +22,45 @@ class Edit extends Component {
       image: "",
       language: "",
       origin: "",
+      symbol: "",
       quality: "",
-      tags: '',
+      tags: "",
       categoriesM: [],
       categories: [],
       cats: [],
       actorsM: [],
       actors: [],
-      actor: '',
+      actor: "",
       directorsM: [],
       directors: [],
       director: "",
-      sourcesM: [],
-      sources: [],
-      srcName: "",
-      src: "",
       errors: [],
       token: "",
-      trailer: "",
+      bg: "",
     };
   }
 
   fetchCats = async () => {
     axios({
-      url: 'categories',
+      url: "moderator/categories",
       method: "GET",
       responseType: "json",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        // Authorization: "Bearer " + this.state.token,
+        Authorization: "Bearer " + this.state.token,
       },
     })
-    .then(async res => {
-      await this.setState({
-        cats: res.data,
+      .then(async (res) => {
+        // console.log(res.data);
+        await this.setState({
+          cats: res.data,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
       });
-      console.log(this.state.cats);
-    })
-    .catch(err => {
-      console.error(err);
-    })
-  }
+  };
 
   fetchMovie = async () => {
     const id = this.props.match.params.id;
@@ -86,8 +84,8 @@ class Edit extends Component {
           dir.checked = true;
         });
         res.data.categories.map((cat) => {
-          this.state.cats.forEach(element => {
-            if (element.name === cat.name) {
+          this.state.cats.forEach((element) => {
+            if (element.name == cat.name) {
               element.checked = true;
             } else if (!element.checked) {
               element.checked = false;
@@ -114,12 +112,10 @@ class Edit extends Component {
           categoriesM: res.data.categories,
           year: res.data.year,
           overview: res.data.description,
-          // sourcesM: res.data.movie_sources,
-          // sources: res.data.movieSources.map((src) => src.slug),
           image: res.data.img,
           tags: res.data.tags,
           tags: res.data.tags,
-          trailer: res.data.trailer
+          bg: res.data.bg
         });
         // console.log(this.state.id);
       })
@@ -147,12 +143,11 @@ class Edit extends Component {
       allow_main: 0,
       is_approved: 0,
       fixed: 0,
-      Symbol: "",
+      Symbol: this.state.symbol,
       tags: this.state.tags,
       metatitle: "",
       type: "movie",
-      // sources: this.state.sources,
-      trailer: this.state.trailer
+      bg: this.state.bg,
     };
 
     // console.log(data);
@@ -163,95 +158,49 @@ class Edit extends Component {
       errors: [],
     });
 
-    if (data.title === "") {
-      await this.setState({
-        errors: [...this.state.errors, "le titre est requis!"],
-      });
-    }
-
-    if (data.duration === "") {
-      await this.setState({
-        errors: [...this.state.errors, "duration est requis!"],
-      });
-    }
-
-    if (data.origin === "") {
-      await this.setState({
-        errors: [...this.state.errors, "origine est requis!"],
-      });
-    }
-
-    if (data.year === "") {
-      await this.setState({
-        errors: [...this.state.errors, "année est requis!"],
-      });
-    }
-
-    if (data.quality === "") {
-      await this.setState({
-        errors: [...this.state.errors, "qualité est requis!"],
-      });
-    }
-
-    if (data.lang === "") {
-      await this.setState({
-        errors: [...this.state.errors, "langue est requis!"],
-      });
-    }
-
-    // if (!data.sources.length) {
-    //   await this.setState({
-    //     errors: [...this.state.errors, "sources must not be empty"],
-    //   });
-    // }
-
-    if (!this.state.errors.length) {
-      let url = `/moderator/posts/${this.state.id}`;
-      await axios({
-        url,
-        method: "put",
-        data,
-        responseType: "json",
-        headers: {
-          Authorization: `Bearer ${this.state.token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then(async (res) => {
-          await this.setState({
-            errors: [],
-            duration: "",
-            year: "",
-            overview: "",
-            title: "",
-            image: "",
-            language: "",
-            origin: "",
-            quality: "",
-            tags: [],
-            categoriesM: [],
-            categories: [],
-            actorsM: [],
-            directorsM: [],
-            actors: [],
-            directors: [],
-            // sources: [],
-            srcName: "",
-            src: "",
-          });
-
-          window.location.href = '/moderator/movies';
-        })
-        .catch(async (err) => {
-          // console.log(err.response);
-          await this.setState({
-            errors: [...this.state.errors, err.response.data.message],
-          });
+    let url = `/moderator/posts/${this.state.id}`;
+    await axios({
+      url,
+      method: "put",
+      data,
+      responseType: "json",
+      headers: {
+        Authorization: `Bearer ${this.state.token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then(async (res) => {
+        await this.setState({
+          errors: [],
+          duration: "",
+          year: "",
+          overview: "",
+          title: "",
+          image: "",
+          language: "",
+          origin: "",
+          quality: "",
+          tags: [],
+          categoriesM: [],
+          categories: [],
+          actorsM: [],
+          directorsM: [],
+          actors: [],
+          directors: [],
+          // sources: [],
+          srcName: "",
+          src: "",
         });
-    } else {
-      // console.log(this.state.errors);
-    }
+
+        window.location.href = "/moderator/movies";
+      })
+      .catch(async (err) => {
+        // console.log(err.response);
+        await this.setState({
+          errors: [...this.state.errors, err.response.data.message],
+        });
+      });
   };
 
   componentDidMount() {
@@ -262,8 +211,8 @@ class Edit extends Component {
         token: token,
       },
       () => {
-        this.fetchMovie(1);
         this.fetchCats();
+        this.fetchMovie(1);
       }
     );
   }
@@ -319,6 +268,24 @@ class Edit extends Component {
               style={{ maxHeight: 400 }}
               className="block"
               src={this.state.image}
+            />
+          </div>
+          <div className="flex flex-col gap-4">
+            <label htmlFor="" className="text-lg font-bold">
+              Image de fond
+            </label>
+            <input
+              type="text"
+              className="p-2 rounded-md border-2 focus:outline-none border-gray-300 flex-grow"
+              value={this.state.bg}
+              placeholder="Image de fond"
+              onChange={(e) => this.setState({ bg: e.target.value })}
+            />
+            <img
+              alt=""
+              id="poster"
+              className="block w-fit"
+              src={this.state.bg}
             />
           </div>
 
@@ -387,8 +354,7 @@ class Edit extends Component {
                             { name: this.state.actor, checked: true },
                           ],
                           actor: "",
-                        },
-                        () => console.log(this.state.actors)
+                        }
                       );
                     }
                   }}
@@ -422,8 +388,7 @@ class Edit extends Component {
                                     ...this.state.directors,
                                     director.id,
                                   ],
-                                },
-                                () => console.log(this.state.directors)
+                                }
                               );
                               director.checked = true;
                             } else {
@@ -432,8 +397,7 @@ class Edit extends Component {
                                   directors: this.state.directors.filter(
                                     (dir) => dir != director.id
                                   ),
-                                },
-                                () => console.log(this.state.directors)
+                                }
                               );
                               director.checked = false;
                             }
@@ -470,8 +434,7 @@ class Edit extends Component {
                             { name: this.state.director, checked: true },
                           ],
                           director: "",
-                        },
-                        () => console.log(this.state.directors)
+                        }
                       );
                     }
                   }}
@@ -506,6 +469,13 @@ class Edit extends Component {
               value={this.state.origin}
               onChange={(e) => this.setState({ origin: e.target.value })}
             />
+            <input
+              type="text"
+              placeholder="Symbol"
+              className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
+              value={this.state.symbol}
+              onChange={(e) => this.setState({ symbol: e.target.value })}
+            />
           </div>
           <div className="flex flex-col gap-4">
             <label htmlFor="" className="text-lg font-bold">
@@ -517,18 +487,6 @@ class Edit extends Component {
               className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
               value={this.state.tags}
               onChange={(e) => this.setState({ tags: e.target.value })}
-            />
-          </div>
-          <div className="flex flex-col gap-4">
-            <label htmlFor="" className="text-lg font-bold">
-              Lien Bande annonce
-            </label>
-            <input
-              type="text"
-              placeholder="trailer"
-              className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-              value={this.state.trailer}
-              onChange={(e) => this.setState({ trailer: e.target.value })}
             />
           </div>
 
@@ -558,8 +516,7 @@ class Edit extends Component {
                                     ...this.state.categories,
                                     category.name,
                                   ],
-                                },
-                                () => console.log(this.state.categories)
+                                }
                               );
                               category.checked = true;
                             } else {
@@ -568,8 +525,7 @@ class Edit extends Component {
                                   categories: this.state.categories.filter(
                                     (cat) => cat != category.name
                                   ),
-                                },
-                                () => console.log(this.state.categories)
+                                }
                               );
                               category.checked = false;
                             }
@@ -582,70 +538,10 @@ class Edit extends Component {
             </article>
           </fieldset>
 
-          {/* <fieldset className="border-2 border-gray-300 rounded-md p-4">
-            <legend className="text-xl font-semibold">Sources</legend>
-            <div className="flex gap-4">
-              <input
-                type="text"
-                placeholder="Source name"
-                className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                value={this.state.srcName}
-                onChange={(e) => this.setState({ srcName: e.target.value })}
-              />
-              <input
-                type="text"
-                placeholder="Source url"
-                className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                value={this.state.src}
-                onChange={(e) => this.setState({ src: e.target.value })}
-              />
-              <button
-                className="bg-blue-800 p-2 rounded-md border-0"
-                onClick={(e) => {
-                  e.preventDefault();
-                  this.setState({
-                    sources: [
-                      ...this.state.sources,
-                      this.state.srcName + "|" + this.state.src,
-                    ],
-                    srcName: "",
-                    src: "",
-                  });
-                }}
-              >
-                <i className="fa-solid fa-plus text-white text-2xl"></i>
-              </button>
-            </div>
-            <article className="mt-4 space-y-4">
-              {this.state.sources.length
-                ? this.state.sources.map((src) => (
-                    <div className="flex justify-between items-center border-2 border-gray-300 rounded-md p-2 ">
-                      <span>{src}</span>
-                      <i
-                        className="fa-solid fa-trash text-red-500 text-xl cursor-pointer"
-                        onClick={async () => {
-                          await this.setState({
-                            sources: this.state.sources.filter(
-                              (s) => s !== src
-                            ),
-                          });
-                        }}
-                      ></i>
-                    </div>
-                  ))
-                : null}
-            </article>
-          </fieldset> */}
+          
 
           <div className="space-y-4 my-4">
-            {this.state.errors.length
-              ? this.state.errors.map((error) => (
-                  <Alert status="error" className="rounded-md" key={error}>
-                    <AlertIcon />
-                    {error}
-                  </Alert>
-                ))
-              : null}
+            <Error errors={this.state.errors} />
           </div>
 
           <button className="btn btn-accent" onClick={this.handleSubmit}>

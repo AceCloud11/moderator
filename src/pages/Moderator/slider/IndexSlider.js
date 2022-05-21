@@ -13,16 +13,17 @@ export default function IndexSlider() {
 
   const fetchSlides = async () => {
     await axios({
-      url: "/posts/slider",
+      url: "moderator/posts/slider",
       method: "GET",
       responseType: "json",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        // Authorization: "Bearer " + this.state.token,
+        Authorization: "Bearer " + data.token,
       },
     })
       .then(async (res) => {
+        console.log(res.data);
         setSlides(res.data);
       })
       .catch((err) => {

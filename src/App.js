@@ -1,15 +1,24 @@
 import "./App.css";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+  useHistory,
+} from "react-router-dom";
 import { useState, useEffect } from "react";
 import UserContext from "./Context/UserContext";
-import Front from "./pages/Front";
 import Dashboard from "./pages/Moderator/Dashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Cookies from "js-cookie";
 
 function App() {
+  let history = useHistory();
   const [openMenu, setOpenMenu] = useState(false);
   const [role, setRole] = useState(null);
   const [token, setToken] = useState(null);
+  const [tag, setTag] = useState();
 
   const handleMenuClick = () => {
     setOpenMenu(!openMenu);
@@ -21,7 +30,7 @@ function App() {
   useEffect(() => {
     setRole(Cookies.get("role"));
     setToken(Cookies.get("token"));
-    // console.log(role);
+    console.log(Cookies.get("role"));
 
     return () => {
       setToken(null);
@@ -37,15 +46,37 @@ function App() {
         }}
       >
         <Switch>
+          
           <Route path="/moderator">
-            {role == "moderator" || role === "admin" ? (
+            {Cookies.get("role") == "moderator" ? (
               <Dashboard />
             ) : (
-              <Front token={token} />
+              <Redirect to="/login" />
             )}
           </Route>
-          <Route path="/">
-            <Front token={token} />
+
+          <Route path="/login">
+            {Cookies.get("role") == "moderator" ? (
+              <Redirect to="/moderator" />
+            ) : (
+              <Login />
+            )}
+          </Route>
+
+          <Route path="/register">
+            {Cookies.get("role") == "moderator" ? (
+              <Redirect to="/moderator" />
+            ) : (
+              <Register />
+            )}
+          </Route>
+
+          <Route exact path="/">
+            {Cookies.get("role") == "moderator" ? (
+              <Redirect to="/moderator" />
+            ) : (
+              <Redirect to="/login" />
+            )}
           </Route>
         </Switch>
       </UserContext.Provider>

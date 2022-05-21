@@ -2,6 +2,7 @@ import { Alert, AlertIcon } from "@chakra-ui/alert";
 import axios from "axios";
 import React, { Component } from "react";
 import UserContext from "../../../Context/UserContext";
+import Error from "../../../components/Error";
 
 export default class Create extends Component {
   static contextType = UserContext;
@@ -21,7 +22,7 @@ export default class Create extends Component {
       language: "",
       origin: "",
       quality: "",
-      tags: [],
+      tags: "",
       categoriesM: [],
       categories: [],
       cats: [],
@@ -29,24 +30,23 @@ export default class Create extends Component {
       directorsM: [],
       actors: [],
       directors: [],
-      // sources: [],
-      trailer: '',
       srcName: "",
       src: "",
       errors: [],
       token: "",
+      symbol: "",
     };
   }
 
   fetchCats = async () => {
     axios({
-      url: "categories",
+      url: "moderator/categories",
       method: "GET",
       responseType: "json",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        // Authorization: "Bearer " + this.state.token,
+        Authorization: "Bearer " + this.state.token,
       },
     })
       .then(async (res) => {
@@ -144,105 +144,60 @@ export default class Create extends Component {
       allow_main: 0,
       is_approved: 0,
       fixed: 0,
-      Symbol: "",
+      Symbol: this.state.symbol,
       tags: this.state.tags,
       metatitle: "",
       type: "movie",
-      // sources: this.state.sources,
-      trailer: this.state.trailer
+      bg: this.state.bg,
     };
-
-    // console.log(data);
-    // return null
 
     await this.setState({
       errors: [],
     });
 
-    if (data.title === "") {
-      await this.setState({
-        errors: [...this.state.errors, "title is required!"],
-      });
-    }
-
-    if (data.duration === "") {
-      await this.setState({
-        errors: [...this.state.errors, "duration is required!"],
-      });
-    }
-
-    if (data.origin === "") {
-      await this.setState({
-        errors: [...this.state.errors, "origin is required!"],
-      });
-    }
-
-    if (data.year === "") {
-      await this.setState({
-        errors: [...this.state.errors, "year is required!"],
-      });
-    }
-
-    if (data.quality === "") {
-      await this.setState({
-        errors: [...this.state.errors, "quality is required!"],
-      });
-    }
-
-    if (data.lang === "") {
-      await this.setState({
-        errors: [...this.state.errors, "language is required!"],
-      });
-    }
-
-
-    if (!this.state.errors.length) {
-      await axios({
-        url: "/moderator/posts",
-        method: "post",
-        data,
-        responseType: "json",
-        headers: {
-          Authorization: `Bearer ${this.state.token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then(async (res) => {
-          // console.log(res.data);
-          await this.setState({
-            errors: [],
-            duration: "",
-            year: "",
-            overview: "",
-            title: "",
-            image: "",
-            language: "",
-            origin: "",
-            quality: "",
-            tags: [],
-            categoriesM: [],
-            categories: [],
-            actorsM: [],
-            directorsM: [],
-            actors: [],
-            directors: [],
-            sources: [],
-            srcName: "",
-            src: "",
-          });
-
-          window.location.href = "/moderator/movies";
-        })
-        .catch(async (err) => {
-          // console.log(err.response);
-          await this.setState({
-            errors: [...this.state.errors, err.response.data.message],
-          });
+    await axios({
+      url: "/moderator/posts",
+      method: "post",
+      data,
+      responseType: "json",
+      headers: {
+        Authorization: `Bearer ${this.state.token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then(async (res) => {
+        // console.log(res.data);
+        await this.setState({
+          errors: [],
+          duration: "",
+          year: "",
+          overview: "",
+          title: "",
+          image: "",
+          language: "",
+          origin: "",
+          quality: "",
+          tags: [],
+          categoriesM: [],
+          categories: [],
+          actorsM: [],
+          directorsM: [],
+          actors: [],
+          directors: [],
+          sources: [],
+          srcName: "",
+          src: "",
+          bg: "",
         });
-    } else {
-      // console.log(this.state.errors);
-    }
+
+        window.location.href = "/moderator/movies";
+      })
+      .catch(async (err) => {
+        await this.setState({
+          errors: [...this.state.errors, err.response.data.message],
+        });
+      });
   };
 
   handleNameSearch = (e) => {
@@ -261,7 +216,23 @@ export default class Create extends Component {
       id +
       "?api_key=e9d2c04b66ea46ff8dd8798d69c92134&&language=fr-FR";
 
+    let urlImage =
+      "https://api.themoviedb.org/3/movie/" +
+      id +
+      "/images?api_key=e9d2c04b66ea46ff8dd8798d69c92134";
 
+    axios
+      .get(urlImage)
+      .then((res) => {
+        this.setState({
+          bg:
+            "https://image.tmdb.org/t/p/original" +
+            res.data.backdrops[0].file_path,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
     await axios({
       url,
       method: "get",
@@ -272,7 +243,7 @@ export default class Create extends Component {
       },
     })
       .then(async (res) => {
-        // console.log(res.data);
+        console.log(res.data);
         const hours = parseInt(parseInt(res.data.runtime) / 60);
         const minutes = parseInt(parseInt(res.data.runtime) % 60);
         let dur = "";
@@ -295,7 +266,7 @@ export default class Create extends Component {
         await this.setState({
           title: res.data.title,
           overview: res.data.overview,
-          image: "https://image.tmdb.org/t/p/w500/" + res.data.poster_path,
+          image: "https://image.tmdb.org/t/p/original" + res.data.poster_path,
           duration: dur,
           year: res.data.release_date.split("-")[0],
           categories: this.state.cats
@@ -303,26 +274,23 @@ export default class Create extends Component {
             .map((cat) => cat.name),
           tags: res.data.tagline,
         });
-        // console.log(this.state.tags);
+        console.log(this.state.tags);
       })
       .catch((err) => {
         console.error(err);
       });
 
-  
-      this.getCast(id);
-      this.getTrailer(id);
-      
+    this.getCast(id);
+    this.getTrailer(id);
   };
 
   // get cast and crew
   getCast = async (id) => {
-
     let url =
       "https://api.themoviedb.org/3/movie/" +
       id +
       "/credits?api_key=e9d2c04b66ea46ff8dd8798d69c92134&&language=fr-FR";
-      await axios({
+    await axios({
       url: url,
       method: "get",
       responseType: "json",
@@ -347,76 +315,104 @@ export default class Create extends Component {
       .catch((err) => {
         console.error(err);
       });
-  }
+  };
 
   // get the movie trailer
   getTrailer = async (id) => {
-
-     let url =
-         "https://api.themoviedb.org/3/movie/" +
-         id +
-         "/videos?api_key=e9d2c04b66ea46ff8dd8798d69c92134&&language=fr-FR";
+    let url =
+      "https://api.themoviedb.org/3/movie/" +
+      id +
+      "/videos?api_key=e9d2c04b66ea46ff8dd8798d69c92134&&language=fr-FR";
 
     // get the videos
-      await axios({
-        url: url,
-        method: "get",
-        responseType: "json",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then(async (res) => {
-            // console.log(res.data);
-            let trailers = res.data.results;
-            let trailer = '';
-            trailers.map(tr => {
-              if (tr.site == "Youtube") {
-                if (trailer === "") {
-                  trailer =
-                    "https://www.youtube.com/embed/" + trailers[0].key;
-                }
-              } else if (tr.site == "Vimeo") {
-                trailer = "https://player.vimeo.com/video/" + trailers[0].key;
-              }
-            })
-            // console.log(trailer);
-          await this.setState({
-           trailer
-          });
-          // console.log(this.state.directors);
-        })
-        .catch((err) => {
-          console.error(err);
+    await axios({
+      url: url,
+      method: "get",
+      responseType: "json",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then(async (res) => {
+        // console.log(res.data);
+        let trailers = res.data.results;
+        let trailer = "";
+        trailers.map((tr) => {
+          if (tr.site == "Youtube") {
+            if (trailer === "") {
+              trailer = "https://www.youtube.com/embed/" + trailers[0].key;
+            }
+          } else if (tr.site == "Vimeo") {
+            trailer = "https://player.vimeo.com/video/" + trailers[0].key;
+          }
         });
-  }
+        // console.log(trailer);
+        await this.setState({
+          trailer,
+        });
+        // console.log(this.state.directors);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   selectAll = async (e, type) => {
     e.preventDefault();
+    let deselectActor = true;
+    this.state.actorsM.forEach((el) => {
+      if (el.checked == false) {
+        deselectActor = false;
+      }
+    });
+    let deselectDirector = true;
+    this.state.directorsM.forEach((el) => {
+      if (el.checked == false) {
+        deselectDirector = false;
+      }
+    });
+
     if (type === "actors") {
-      this.state.actorsM.forEach((el) => {
-        el.checked = true;
-      });
-      let actors = this.state.actorsM.map((el) => el.name);
-      await this.setState({ actorsM: this.state.actorsM, actors });
+      if (deselectActor) {
+        this.state.actorsM.forEach((el) => {
+          el.checked = false;
+        });
+        let actors = [];
+        await this.setState({ actorsM: this.state.actorsM, actors });
+      } else {
+        this.state.actorsM.forEach((el) => {
+          el.checked = true;
+        });
+        let actors = this.state.actorsM.map((el) => el.name);
+        await this.setState({ actorsM: this.state.actorsM, actors });
+      }
     } else if (type === "directors") {
-      this.state.directorsM.forEach((el) => {
-        el.checked = true;
-      });
-      let directors = this.state.directorsM.map((el) => el.name);
-      await this.setState({ directorsM: this.state.directorsM, directors });
+      if (deselectDirector) {
+        this.state.directorsM.forEach((el) => {
+          el.checked = false;
+        });
+        let directors = [];
+        await this.setState({ directorsM: this.state.directorsM, directors });
+      } else {
+        this.state.directorsM.forEach((el) => {
+          el.checked = true;
+        });
+        let directors = this.state.directorsM.map((el) => el.name);
+        await this.setState({ directorsM: this.state.directorsM, directors });
+      }
     }
   };
 
   componentDidMount() {
     const { token } = this.context;
 
-    this.setState({
-      token: token,
-    });
-
-    this.fetchCats();
+    this.setState(
+      {
+        token: token,
+      },
+      () => this.fetchCats()
+    );
   }
 
   render() {
@@ -585,11 +581,27 @@ export default class Create extends Component {
             ></textarea>
             <img
               alt=""
-              width="400"
+              // width="400"
               id="poster"
-              style={{ maxHeight: 400 }}
-              className="block"
+              // style={{ maxHeight: 400 }}
+              className="block w-full lg:w-1/4"
               src={this.state.image}
+            />
+          </div>
+
+          <div className="flex gap-4 flex-wrap">
+            <input
+              type="text"
+              className="p-2 rounded-md border-2 focus:outline-none border-gray-300 flex-grow"
+              value={this.state.bg}
+              placeholder="Image de fond"
+              onChange={(e) => this.setState({ bg: e.target.value })}
+            />
+            <img
+              alt=""
+              id="poster"
+              className="block w-fit"
+              src={this.state.bg}
             />
           </div>
 
@@ -719,6 +731,22 @@ export default class Create extends Component {
               value={this.state.origin}
               onChange={(e) => this.setState({ origin: e.target.value })}
             />
+            <input
+              type="text"
+              placeholder="Symbol"
+              className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
+              value={this.state.symbol}
+              onChange={(e) => this.setState({ symbol: e.target.value })}
+            />
+          </div>
+          <div className="flex gap-4">
+            <input
+              type="text"
+              placeholder="Mots clés"
+              className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
+              value={this.state.tags}
+              onChange={(e) => this.setState({ tags: e.target.value })}
+            />
           </div>
 
           <fieldset className="border-2 border-gray-300 rounded-md p-4">
@@ -823,14 +851,7 @@ export default class Create extends Component {
           </fieldset> */}
 
           <div className="space-y-4 my-4">
-            {this.state.errors.length
-              ? this.state.errors.map((error) => (
-                  <Alert status="error" className="rounded-md" key={error}>
-                    <AlertIcon />
-                    {error}
-                  </Alert>
-                ))
-              : null}
+            <Error errors={this.state.errors} />
           </div>
 
           <button className="btn btn-accent" onClick={this.handleSubmit}>

@@ -74,8 +74,14 @@ export default function IndexComments() {
 
   const filter = async (value) => {
     // console.log("/moderator/comments?is_approved=" + value);
+    let url = "";
+    if (value == 2) {
+      url = "/moderator/comments";
+    } else {
+      url = "/moderator/comments?is_approved=" + value;
+    }
     await axios({
-      url: "/moderator/comments?is_approved=" + value,
+      url,
       method: "get",
       responseType: "json",
       headers: {
@@ -136,6 +142,12 @@ export default function IndexComments() {
   };
 
   const searchComments = async (id) => {
+    const num = parseInt(id);
+    if (isNaN(num)) {
+      alert("Seuls les entiers sont autorisés!");
+      setSearch('');
+      return;
+    }
     await axios({
       url: "/moderator/comments/" + id,
       method: "get",
@@ -196,7 +208,7 @@ export default function IndexComments() {
                 type="text"
                 id="table-search"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Search for items"
+                placeholder="Rechercher par identifiant"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -230,6 +242,7 @@ export default function IndexComments() {
             <option disabled selected>
               Filtre
             </option>
+            <option value="2">Tout</option>
             <option value="1">A approuvé</option>
             <option value="0">Refusé</option>
           </select>

@@ -28,9 +28,9 @@ export default function Login() {
 
     if (isCatptcha) {
       axios
-        .post("http://192.168.3.7:8001/api/login", data)
+        .post("/login", data)
         .then((res) => {
-          // console.log(res.data);
+          console.log(res.data);
           if (res.data.error) {
             setMsg((prev) => [...prev, res.data.error]);
             // console.log(res.data.error);
@@ -76,7 +76,7 @@ export default function Login() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-100 h-screen">
       <div className="container max-w-md mx-auto flex-1 flex flex-col items-center justify-center px-2 space-y-4 mt-8">
         {msg.length
           ? msg.map((m) => (
@@ -117,9 +117,9 @@ export default function Login() {
             Connexion
           </button>
           <div className="flex gap-4 mt-4 items-center">
-            <p className="text-white">Don't have an account yet?</p>
+            <p className="text-white">Vous n'avez pas encore de compte ?</p>
             <a href="/register" className="text-blue-500 font-bold">
-              Register
+              Enregistrez vous
             </a>
           </div>
         </div>
