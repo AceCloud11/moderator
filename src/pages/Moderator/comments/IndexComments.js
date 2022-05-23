@@ -257,6 +257,9 @@ export default function IndexComments() {
                 </div>
               </th>
               <th scope="col" className="px-6 py-3">
+                ID du post
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Text du commentaire
               </th>
               <th scope="col" className="px-6 py-3">
@@ -281,6 +284,14 @@ export default function IndexComments() {
                         <label className="sr-only">checkbox</label>
                       </div>
                     </td>
+
+                    <td className="p-4">
+                      <div className="flex items-center">
+                        {comment.post_id}
+                        <label className="sr-only">checkbox</label>
+                      </div>
+                    </td>
+
                     <th
                       scope="row"
                       className="px-6 py-4 font-medium text-gray-900 dark:text-white"

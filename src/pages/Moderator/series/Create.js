@@ -132,8 +132,8 @@ export default class Create extends Component {
       trailer: this.state.trailer
     };
 
-    console.log(data);
-    return null;
+    // console.log(data);
+    // return null;
 
     await this.setState({
       errors: [],

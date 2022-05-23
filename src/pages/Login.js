@@ -26,7 +26,7 @@ export default function Login() {
     const site_key = "6Lek_I0fAAAAAFKQ_9bWD62yBEam1K4B68aYmeDt";
     const site_secret = "6Lek_I0fAAAAAGs_biBQpThbUVoaD4bsjA-D72bY";
 
-    if (isCatptcha) {
+    // if (isCatptcha) {
       axios
         .post("/login", data)
         .then((res) => {
@@ -60,6 +60,7 @@ export default function Login() {
           }
         })
         .catch((err) => {
+          console.log(err);
           if (err.response.data.message) {
             setMsg((prev) => [...prev, err.response.data.message]);
           }
@@ -67,7 +68,7 @@ export default function Login() {
             setMsg((prev) => [...prev, err.response.data.error]);
           }
         });
-    }
+    // }
   };
 
   function onCaptchaChange(value) {
@@ -103,25 +104,25 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <ReCAPTCHA
+          {/* <ReCAPTCHA
             sitekey="6Lek_I0fAAAAAFKQ_9bWD62yBEam1K4B68aYmeDt"
             onChange={onCaptchaChange}
             onExpired={() => setIsCatptcha(false)}
-          />
+          /> */}
 
           <button
             onClick={(e) => handleSubmit(e)}
             className="w-full text-center py-3 rounded bg-green text-indigo-800 bg-white font-bold my-1"
-            disabled={!isCatptcha}
+            // disabled={!isCatptcha}
           >
             Connexion
           </button>
-          <div className="flex gap-4 mt-4 items-center">
+          {/* <div className="flex gap-4 mt-4 items-center">
             <p className="text-white">Vous n'avez pas encore de compte ?</p>
             <a href="/register" className="text-blue-500 font-bold">
               Enregistrez vous
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

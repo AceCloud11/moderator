@@ -243,7 +243,7 @@ export default class Create extends Component {
       },
     })
       .then(async (res) => {
-        console.log(res.data);
+        // console.log(res.data);
         const hours = parseInt(parseInt(res.data.runtime) / 60);
         const minutes = parseInt(parseInt(res.data.runtime) % 60);
         let dur = "";
@@ -274,7 +274,7 @@ export default class Create extends Component {
             .map((cat) => cat.name),
           tags: res.data.tagline,
         });
-        console.log(this.state.tags);
+        // console.log(this.state.tags);
       })
       .catch((err) => {
         console.error(err);
@@ -317,46 +317,8 @@ export default class Create extends Component {
       });
   };
 
-  // get the movie trailer
-  getTrailer = async (id) => {
-    let url =
-      "https://api.themoviedb.org/3/movie/" +
-      id +
-      "/videos?api_key=e9d2c04b66ea46ff8dd8798d69c92134&&language=fr-FR";
-
-    // get the videos
-    await axios({
-      url: url,
-      method: "get",
-      responseType: "json",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then(async (res) => {
-        // console.log(res.data);
-        let trailers = res.data.results;
-        let trailer = "";
-        trailers.map((tr) => {
-          if (tr.site == "Youtube") {
-            if (trailer === "") {
-              trailer = "https://www.youtube.com/embed/" + trailers[0].key;
-            }
-          } else if (tr.site == "Vimeo") {
-            trailer = "https://player.vimeo.com/video/" + trailers[0].key;
-          }
-        });
-        // console.log(trailer);
-        await this.setState({
-          trailer,
-        });
-        // console.log(this.state.directors);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
+  
+  
 
   selectAll = async (e, type) => {
     e.preventDefault();
@@ -775,8 +737,7 @@ export default class Create extends Component {
                                     ...this.state.categories,
                                     category.name,
                                   ],
-                                },
-                                () => console.log(this.state.categories)
+                                }
                               );
                               category.checked = true;
                             } else {
@@ -785,8 +746,7 @@ export default class Create extends Component {
                                   categories: this.state.categories.filter(
                                     (cat) => cat != category.name
                                   ),
-                                },
-                                () => console.log(this.state.categories)
+                                }
                               );
                               category.checked = false;
                             }

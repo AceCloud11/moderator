@@ -114,7 +114,7 @@ export default class Index extends Component {
 
   deleteSerie = async (id) => {
     await axios({
-      url: "/admin/posts/" + id,
+      url: "/moderator/posts/" + id,
       method: "delete",
       responseType: "json",
       headers: {
@@ -124,9 +124,9 @@ export default class Index extends Component {
       },
     })
       .then(async (response) => {
+        this.notify(response.data.success);
         await this.fetchSeries(1);
         // console.log(response.data);
-        this.notify(response.data.message);
       })
       .catch((error) => {
         console.log(error);
@@ -317,14 +317,12 @@ export default class Index extends Component {
                         </button>
 
                         {/* Display the delete button if admin */}
-                        {this.state.role == "admin" ? (
                           <button
                             className="font-medium text-red-600 dark:text-blue-500 hover:underline"
                             onClick={() => this.deleteSerie(serie.id)}
                           >
                             Delete
                           </button>
-                        ) : null}
 
                         <a
                           href={`/moderator/series/${serie.id}/episodes`}

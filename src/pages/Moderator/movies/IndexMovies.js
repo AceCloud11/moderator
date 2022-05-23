@@ -46,6 +46,7 @@ export default class IndexMovies extends Component {
       },
     })
       .then(async (response) => {
+        // console.log(response);
         await this.setState({
           movies: response.data.data,
           currentPage: response.data.current_page,
@@ -117,7 +118,7 @@ export default class IndexMovies extends Component {
 
   deleteMovie = async (id) => {
     await axios({
-      url: '/admin/posts/' + id,
+      url: '/moderator/posts/' + id,
       method: "delete",
       responseType: "json",
       headers: {
@@ -128,7 +129,7 @@ export default class IndexMovies extends Component {
     })
       .then(async (response) => {
        await this.fetchMovies(1);
-        this.notify(response.data.message);
+        this.notify(response.data.success);
       })
       .catch((error) => {
         console.log(error);
@@ -323,14 +324,12 @@ export default class IndexMovies extends Component {
                           Sources
                         </a>
 
-                        {this.state.role == "admin" ? (
-                          <button
-                            className="font-medium text-red-600 dark:text-blue-500 hover:underline"
-                            onClick={() => this.deleteMovie(movie.id)}
-                          >
-                            Delete
-                          </button>
-                        ) : null}
+                        <button
+                          className="font-medium text-red-600 dark:text-blue-500 hover:underline"
+                          onClick={() => this.deleteMovie(movie.id)}
+                        >
+                          Delete
+                        </button>
                       </td>
                     </tr>
                   ))

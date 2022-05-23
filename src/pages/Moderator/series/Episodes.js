@@ -90,7 +90,7 @@ export default function Episodes() {
     }
 
     // extract name from the url
-    let n = src.split("//")[1].split(".")[0];
+    let n = src.split("//")[1].split("/")[0];
 
     if (!hosts.includes(n)) {
       await setErrors((old) => [...old, `la source ${n} n'est pas autorisée`]);
@@ -103,6 +103,8 @@ export default function Episodes() {
       src: src,
       name: n
     };
+
+    
 
     setErrors([]);
     await axios({
@@ -152,7 +154,7 @@ export default function Episodes() {
     }
 
     // extract name from the url
-    let n = src.split("//")[1].split(".")[0];
+    let n = src.split("//")[1].split("/")[0];
 
     if (!hosts.includes(n)) {
       await setErrors((old) => [...old, `la source ${n} n'est pas autorisée`]);
@@ -246,10 +248,32 @@ export default function Episodes() {
       });
   };
 
+   const getHosts = async () => {
+     axios({
+       url: "/moderator/hosts",
+       method: "GET",
+       responseType: "json",
+       headers: {
+         "Content-Type": "application/json",
+         Accept: "application/json",
+         Authorization: "Bearer " + token,
+       },
+     })
+       .then(async (res) => {
+         // await setDashbaord(res.data);
+         setHosts(res.data.map((el) => el.domain_name));
+
+         // console.log(res.data);
+       })
+       .catch((error) => {
+         console.log(error);
+       });
+   };
+
   useEffect(async () => {
     await fetchEpisodes();
     setEps(fillNumbers());
-    setHosts(['evoload', 'mystream', 'doodstream', 'upload'])
+    getHosts();
     // console.log(eps);
 
     return () => {};

@@ -54,6 +54,7 @@ export default function IndexCategories() {
       responseType: "json",
       data: {
         name: categoryNew,
+        bg: null,
       },
       headers: {
         "Content-Type": "application/json",
