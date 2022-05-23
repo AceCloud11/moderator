@@ -16,7 +16,6 @@ import IndexSeries from "./series/Index";
 import Chat from "./chat/Chat";
 
 import './moderator.css';
-import Chat2 from "./chat/Chat2";
 import UserContext from "../../Context/UserContext";
 import IndexActor from "./actor/IndexActor";
 import IndexDirector from "./director/IndexDirector";
@@ -27,9 +26,16 @@ import Banners from "./banner/Banners";
 import Cookies from "js-cookie";
 import Profile from "./profile/Profile";
 
+import './moderator.css';
+
 export default function Dashboard() {
   
   const { role, token } = useContext(UserContext);
+  
+
+  const setActive = () => {
+
+  }
 
 
   const logout = () => {
@@ -78,7 +84,7 @@ export default function Dashboard() {
                       className="absolute bg-gray-800 text-white right-0 w-60  p-3 overflow-auto z-30 hidden"
                     >
                       <a
-                      href="/moderator/profile"
+                        href="/moderator/profile"
                         className="p-2 hover:bg-gray-800 text-white text-sm no-underline hover:no-underline block w-100"
                       >
                         <i className="fa fa-user fa-fw"></i> Profil
@@ -101,14 +107,14 @@ export default function Dashboard() {
       </header>
 
       <div className="flex flex-col md:flex-row bg-gray-800 ">
-        <nav aria-label="alternative nav pt-12 ">
+        <nav className="alternative nav pt-12 bg-gray-800">
           <div className="bg-gray-800 shadow-xl h-20 fixed bottom-0 mt-20 md:relative md:h-screen z-10 w-full md:w-60 content-center overflow-scroll no-scrollbar">
             <div className="md:mt-12 md:w-60 md:fixed md:left-0 md:top-0 content-center md:content-start text-left justify-between">
-              <ul className="list-reset flex flex-row md:flex-col pt-3 md:py-3 px-1 md:px-2 text-center md:text-left">
+              <ul  className="list-reset flex flex-row md:flex-col pt-3 md:py-3 px-1 md:px-2 text-center md:text-left">
                 <li className="mr-3 flex-1">
                   <a
                     href="/moderator"
-                    className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-pink-500"
+                    className=" block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2 hover:border-blue-600"
                   >
                     <i className="fas fa-gauge-high pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base text-gray-400 md:text-gray-200 block md:inline-block">
@@ -119,7 +125,7 @@ export default function Dashboard() {
                 <li className="mr-3 flex-1">
                   <a
                     href="/moderator/movies"
-                    className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-pink-500"
+                    className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2  hover:border-blue-600"
                   >
                     <i className="fas fa-film pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base text-gray-400 md:text-gray-200 block md:inline-block">
@@ -130,7 +136,7 @@ export default function Dashboard() {
                 <li className="mr-3 flex-1">
                   <a
                     href="/moderator/categories"
-                    className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-purple-500"
+                    className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white  hover:border-b-2 hover:border-blue-600"
                   >
                     <i className="fa-solid fa-network-wired pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base text-gray-400 md:text-gray-200 block md:inline-block">
@@ -141,7 +147,7 @@ export default function Dashboard() {
                 <li className="mr-3 flex-1">
                   <a
                     href="/moderator/series"
-                    className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2 hover:border-red-500"
+                    className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2 hover:border-blue-600"
                   >
                     <i className="fas fa-tv pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base text-white md:text-white block md:inline-block">
@@ -152,7 +158,7 @@ export default function Dashboard() {
                 <li className="mr-3 flex-1">
                   <a
                     href="/moderator/actors"
-                    className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2 hover:border-red-500"
+                    className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2 hover:border-blue-600"
                   >
                     <i className="fas fa-users pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base text-white md:text-white block md:inline-block">
@@ -163,7 +169,7 @@ export default function Dashboard() {
                 <li className="mr-3 flex-1">
                   <a
                     href="/moderator/directors"
-                    className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2 hover:border-red-500"
+                    className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2 hover:border-blue-600"
                   >
                     <i className="fas fa-users pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base text-white md:text-white block md:inline-block">
@@ -174,7 +180,7 @@ export default function Dashboard() {
                 <li className="mr-3 flex-1">
                   <a
                     href="/moderator/comments"
-                    className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-red-500"
+                    className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:border-b-2 hover:border-blue-600"
                   >
                     <i className="fa fa-comments pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base text-gray-400 md:text-gray-200 block md:inline-block">
@@ -186,7 +192,7 @@ export default function Dashboard() {
                 <li className="mr-3 flex-1">
                   <a
                     href="/moderator/reports"
-                    className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-red-500"
+                    className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:border-b-2 hover:border-blue-600"
                   >
                     <i className="fa fa-bug pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base text-gray-400 md:text-gray-200 block md:inline-block">
@@ -199,7 +205,7 @@ export default function Dashboard() {
                 <li className="mr-3 flex-1">
                   <a
                     href="/moderator/slider"
-                    className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-red-500"
+                    className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:border-b-2 hover:border-blue-600"
                   >
                     <i className="fa fa-sliders pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base text-gray-400 md:text-gray-200 block md:inline-block">
@@ -212,7 +218,7 @@ export default function Dashboard() {
                 <li className="mr-3 flex-1">
                   <a
                     href="/moderator/banners"
-                    className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-red-500"
+                    className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:border-b-2 hover:border-blue-600"
                   >
                     <i className="fa fa-rss pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base text-gray-400 md:text-gray-200 block md:inline-block">
@@ -225,7 +231,7 @@ export default function Dashboard() {
                 <li className="mr-3 flex-1">
                   <a
                     href="/moderator/chat"
-                    className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-red-500"
+                    className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:border-b-2 hover:border-blue-600"
                   >
                     <i className="fa fa-message pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base text-gray-400 md:text-gray-200 block md:inline-block">
