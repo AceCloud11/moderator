@@ -175,7 +175,7 @@ export default function IndexActor() {
       .then(async (res) => {
         //   console.log(res.data);
         await setDirectorId("");
-        await fetchDirectors();
+        await fetchDirectors(1);
         toast({
           title: res.data.message,
           status: "success",
