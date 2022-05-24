@@ -204,7 +204,7 @@ export default class Index extends Component {
                   className="p-2 bg-blue-500 text-white font-bold rounded-md"
                   onClick={(e) => {
                     e.preventDefault();
-                    this.searchSeries();
+                    this.searchSeries(1);
                   }}
                 >
                   Recherche
