@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
 import IndexCategories from "./categories/IndexCategories";
 import IndexComments from "./comments/IndexComments";
@@ -31,12 +31,8 @@ import './moderator.css';
 export default function Dashboard() {
   
   const { role, token } = useContext(UserContext);
+  const [url, setUrl] = useState('');
   
-
-  const setActive = () => {
-
-  }
-
 
   const logout = () => {
     // localStorage.removeItem("role");
@@ -44,10 +40,13 @@ export default function Dashboard() {
     Cookies.remove("token");
     Cookies.remove("role");
 
+   
     window.location.href = "/";
   };
 
-  
+  useEffect(() => {
+     setUrl(document.location.href.split("moderator")[1]);
+  })
   
 
   return (
@@ -110,8 +109,11 @@ export default function Dashboard() {
         <nav className="alternative nav pt-12 bg-gray-800">
           <div className="bg-gray-800 shadow-xl h-20 fixed bottom-0 mt-20 md:relative md:h-screen z-10 w-full md:w-60 content-center overflow-scroll no-scrollbar">
             <div className="md:mt-12 md:w-60 md:fixed md:left-0 md:top-0 content-center md:content-start text-left justify-between">
-              <ul  className="list-reset flex flex-row md:flex-col pt-3 md:py-3 px-1 md:px-2 text-center md:text-left">
-                <li className="mr-3 flex-1">
+              <ul
+                className="list-reset flex flex-row md:flex-col pt-3 md:py-3 px-1 md:px-2 text-center md:text-left"
+                id="menu-dash"
+              >
+                <li className={`mr-3 flex-1 ${url == "" ? "active" : ""}`}>
                   <a
                     href="/moderator"
                     className=" block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2 hover:border-blue-600"
@@ -122,7 +124,11 @@ export default function Dashboard() {
                     </span>
                   </a>
                 </li>
-                <li className="mr-3 flex-1">
+                <li
+                  className={`mr-3 flex-1 ${
+                    url.includes("movies") ? "active" : ""
+                  }`}
+                >
                   <a
                     href="/moderator/movies"
                     className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2  hover:border-blue-600"
@@ -133,7 +139,11 @@ export default function Dashboard() {
                     </span>
                   </a>
                 </li>
-                <li className="mr-3 flex-1">
+                <li
+                  className={`mr-3 flex-1 ${
+                    url.includes("categories") ? "active" : ""
+                  }`}
+                >
                   <a
                     href="/moderator/categories"
                     className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white  hover:border-b-2 hover:border-blue-600"
@@ -144,7 +154,11 @@ export default function Dashboard() {
                     </span>
                   </a>
                 </li>
-                <li className="mr-3 flex-1">
+                <li
+                  className={`mr-3 flex-1 ${
+                    url.includes("series") ? "active" : ""
+                  }`}
+                >
                   <a
                     href="/moderator/series"
                     className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2 hover:border-blue-600"
@@ -155,7 +169,11 @@ export default function Dashboard() {
                     </span>
                   </a>
                 </li>
-                <li className="mr-3 flex-1">
+                <li
+                  className={`mr-3 flex-1 ${
+                    url.includes("actors") ? "active" : ""
+                  }`}
+                >
                   <a
                     href="/moderator/actors"
                     className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2 hover:border-blue-600"
@@ -166,7 +184,11 @@ export default function Dashboard() {
                     </span>
                   </a>
                 </li>
-                <li className="mr-3 flex-1">
+                <li
+                  className={`mr-3 flex-1 ${
+                    url.includes("directors") ? "active" : ""
+                  }`}
+                >
                   <a
                     href="/moderator/directors"
                     className="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white hover:border-b-2 hover:border-blue-600"
@@ -177,7 +199,11 @@ export default function Dashboard() {
                     </span>
                   </a>
                 </li>
-                <li className="mr-3 flex-1">
+                <li
+                  className={`mr-3 flex-1 ${
+                    url.includes("comments") ? "active" : ""
+                  }`}
+                >
                   <a
                     href="/moderator/comments"
                     className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:border-b-2 hover:border-blue-600"
@@ -189,7 +215,11 @@ export default function Dashboard() {
                   </a>
                 </li>
 
-                <li className="mr-3 flex-1">
+                <li
+                  className={`mr-3 flex-1 ${
+                    url.includes("reports") ? "active" : ""
+                  }`}
+                >
                   <a
                     href="/moderator/reports"
                     className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:border-b-2 hover:border-blue-600"
@@ -202,7 +232,11 @@ export default function Dashboard() {
                 </li>
 
                 {/* Slides Link */}
-                <li className="mr-3 flex-1">
+                <li
+                  className={`mr-3 flex-1 ${
+                    url.includes("slider") ? "active" : ""
+                  }`}
+                >
                   <a
                     href="/moderator/slider"
                     className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:border-b-2 hover:border-blue-600"
@@ -215,7 +249,11 @@ export default function Dashboard() {
                 </li>
 
                 {/* Banners Link */}
-                <li className="mr-3 flex-1">
+                <li
+                  className={`mr-3 flex-1 ${
+                    url.includes("banners") ? "active" : ""
+                  }`}
+                >
                   <a
                     href="/moderator/banners"
                     className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:border-b-2 hover:border-blue-600"
@@ -228,7 +266,11 @@ export default function Dashboard() {
                 </li>
 
                 {/* Chat Link */}
-                <li className="mr-3 flex-1">
+                <li
+                  className={`mr-3 flex-1 ${
+                    url.includes("chat") ? "active" : ""
+                  }`}
+                >
                   <a
                     href="/moderator/chat"
                     className="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:border-b-2 hover:border-blue-600"

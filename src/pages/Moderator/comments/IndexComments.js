@@ -41,7 +41,7 @@ export default function IndexComments() {
       },
     })
       .then((res) => {
-        // console.log(res.data.data);
+        // console.log(res.data.data.user);
         setComments(res.data.data);
         setCurrentPage(res.data.current_page);
         setLastPage(res.data.last_page);
@@ -239,7 +239,7 @@ export default function IndexComments() {
               filter(e.target.value);
             }}
           >
-            <option disabled selected>
+            <option value="2" disabled selected>
               Filtre
             </option>
             <option value="2">Tout</option>

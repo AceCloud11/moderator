@@ -38,13 +38,13 @@ function App() {
             )}
           </Route>
 
-          <Route path="/register">
+          {/* <Route path="/register">
             {Cookies.get("role") == "moderator" ? (
               <Redirect to="/moderator" />
             ) : (
               <Register />
             )}
-          </Route>
+          </Route> */}
 
           <Route exact path="/">
             {Cookies.get("role") == "moderator" ? (
