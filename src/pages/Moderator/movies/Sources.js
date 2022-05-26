@@ -19,6 +19,7 @@ import {
   AlertIcon,
 } from "@chakra-ui/react";
 import Hosts from "../../../components/Hosts";
+import { getNameFromUrl } from "../../../helpers/helpers";
 
 export default function Sources() {
   const [sources, setSources] = useState([]);
@@ -29,9 +30,18 @@ export default function Sources() {
   const [srcId, setSrcId] = useState(null);
   const [hosts, setHosts] = useState([]);
 
+  // change demain name
+  const [demain, setDemain] = useState('');
+  const [demainName, setDemainName] = useState('');
+
   const { token } = useContext(UserContext);
 
   const { id } = useParams();
+
+  const changeDemainName = () => {
+    console.log(demain);
+    console.log(demainName);
+  }
 
   const fetchSources = async () => {
     await axios({
@@ -68,7 +78,13 @@ export default function Sources() {
       return;
     }
 
-    // extract name from the url 
+    // case sinarios
+    // https://demain.com name = diffrent
+    // https://sub.demain.com
+    // https://demain.com.orguptostream
+    // https://sub.demain.com.org
+
+    // extract name from the url
     let n = src.split("//")[1].split("/")[0];
 
     if (!hosts.includes(n)) {
@@ -76,7 +92,6 @@ export default function Sources() {
       return;
     }
 
-    
     await axios({
       url: "/moderator/movie-sources/" + id,
       method: "post",
@@ -213,6 +228,11 @@ export default function Sources() {
     onOpen: onOpenEdit,
     onClose: onCloseEdit,
   } = useDisclosure();
+  const {
+    isOpen: isOpenChangeDemainName,
+    onOpen: onOpenChangeDemainName,
+    onClose: onCloseChangeDemainName,
+  } = useDisclosure();
 
   useEffect(() => {
     fetchSources();
@@ -236,6 +256,12 @@ export default function Sources() {
             onClick={onOpenCreate}
           >
             Ajouter un lien
+          </button>
+          <button
+            className="block px-4 py-2 rounded-md bg-indigo-600 text-white"
+            onClick={onOpenChangeDemainName}
+          >
+            Change nom de demain
           </button>
         </div>
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -371,6 +397,77 @@ export default function Sources() {
             </Button>
             <Button colorScheme="linkedin" onClick={addSources}>
               Ajouter
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Create Episode Modal */}
+      <Modal
+        isOpen={isOpenChangeDemainName}
+        onClose={async () => {
+          onCloseChangeDemainName();
+          await setDemain("");
+          await setDemainName("");
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Changer le nom de Lecteur</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <div>
+              <form action="" className="space-y-4">
+                <div className="flex gap-4 flex-wrap">
+                  <input
+                    type="text"
+                    placeholder="demain"
+                    className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
+                    value={demain}
+                    onChange={(e) => setDemain(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="nom"
+                    className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
+                    value={demainName}
+                    onChange={(e) => setDemainName(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-4 my-4">
+                  {errors.length
+                    ? errors.map((error) => (
+                        <Alert
+                          status="error"
+                          className="rounded-md"
+                          key={error}
+                        >
+                          <AlertIcon />
+                          {error}
+                        </Alert>
+                      ))
+                    : null}
+                </div>
+              </form>
+            </div>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={async () => {
+                onCloseChangeDemainName();
+                await setDemain("");
+                await setDemainName("");
+                setErrors([]);
+              }}
+            >
+              Close
+            </Button>
+            <Button colorScheme="linkedin" onClick={changeDemainName}>
+              Changer
             </Button>
           </ModalFooter>
         </ModalContent>
