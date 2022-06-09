@@ -57,7 +57,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div className="flex flex-shrink md:w-1/3 justify-center md:justify-start text-white">
               <a href="/" aria-label="Home" className="w-32 pl-8">
-                <img src="/wiflix.png" alt="" />
+                <h1>Logo</h1>
               </a>
             </div>
 
