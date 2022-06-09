@@ -23,7 +23,7 @@ function App() {
       >
         <Switch>
           <Route path="/moderator">
-            {Cookies.get("role") == "moderator" ? (
+            {["moderator", "admin"].includes(Cookies.get("role")) ? (
               <Dashboard />
             ) : (
               <Redirect to="/login" />
@@ -31,7 +31,7 @@ function App() {
           </Route>
 
           <Route path="/login">
-            {Cookies.get("role") == "moderator" ? (
+            {["moderator", "admin"].includes(Cookies.get("role")) ? (
               <Redirect to="/moderator" />
             ) : (
               <Login />
@@ -47,7 +47,7 @@ function App() {
           </Route> */}
 
           <Route exact path="/">
-            {Cookies.get("role") == "moderator" ? (
+            {["moderator", "admin"].includes(Cookies.get("role")) ? (
               <Redirect to="/moderator" />
             ) : (
               <Redirect to="/login" />

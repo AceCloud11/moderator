@@ -191,7 +191,7 @@ export default function Index() {
           </BarChart>
         </div> */}
 
-        <div className="bg-white mt-12 overflow-auto no-scrollbar">
+        {/* <div className="bg-white mt-12 overflow-auto no-scrollbar">
           <h1 className="font-bold my-4 text-center text-lg">
             Films les plus favoris
           </h1>
@@ -201,10 +201,10 @@ export default function Index() {
             <YAxis />
             <Tooltip />
             <Legend />
-            {/* <Bar dataKey="pv" fill="#8884d8" /> */}
+            {/* <Bar dataKey="pv" fill="#8884d8" />
             <Bar dataKey="vues" fill="#8884d8" />
           </BarChart>
-        </div>
+        </div> */}
       </section>
     </>
   );

@@ -25,6 +25,8 @@ export default function IndexCategories() {
   const [categoryNew, setCategoryNew] = useState("");
   const [errors, setErrors] = useState([]);
 
+  const [search, setSearch] = useState('');
+
   const notify = (text) => toast.success(text);
 
   const fetchCats = async () => {
@@ -126,14 +128,21 @@ export default function IndexCategories() {
       });
   };
 
+  const searchCats = () => {
+    if (search == "") {
+      fetchCats();
+    }else{
+      const filteredCats = cats.filter((el) => el.name.includes(search, 0));
+      setCats(filteredCats);
+    }
+  }
+
   useEffect(async () => {
     await fetchCats();
 
     return () => {};
   }, []);
 
-  // const { isOpenCreate, onOpenCreate, onCloseCreate } = useDisclosure();
-  // const { isOpenEedit, onOpenEedit, onCloseEedit } = useDisclosure();
   const {
     isOpen: isOpenCreate,
     onOpen: onOpenCreate,
@@ -149,11 +158,35 @@ export default function IndexCategories() {
     <div className="w-full">
       <ToastContainer />
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <div className="p-4 flex flex-wrap justify-between items-center gap-4">
-          <h1 className="text-center text-xl font-bold hidden md:block">
+        <div className="p-4 flex flex-wrap justify-between items-center gap-4 space-y-4">
+          <h1 className="text-center text-xl font-bold">
             Categories
           </h1>
 
+          <div className="flex gap-2">
+            <input
+              type="text"
+              id="table-search"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="rechercher dans les catégories ..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyUp={e => {
+                if(e.key == "Enter"){
+                  searchCats();
+                }
+              }}
+            />
+            <button
+              className="p-2 bg-blue-500 text-white font-bold rounded-md"
+              onClick={(e) => {
+                e.preventDefault();
+                
+              }}
+            >
+              Recherche
+            </button>
+          </div>
           <button
             className="block px-4 py-2 rounded-md bg-indigo-600 text-white"
             onClick={onOpenCreate}
@@ -164,7 +197,6 @@ export default function IndexCategories() {
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-             
               <th scope="col" className="px-6 py-3">
                 Nom du category
               </th>
@@ -181,7 +213,6 @@ export default function IndexCategories() {
                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                     key={cat.id}
                   >
-                    
                     <th
                       scope="row"
                       className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"

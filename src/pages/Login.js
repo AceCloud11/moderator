@@ -23,58 +23,41 @@ export default function Login() {
 
     setMsg([]);
 
-    const site_key = "6Lek_I0fAAAAAFKQ_9bWD62yBEam1K4B68aYmeDt";
-    const site_secret = "6Lek_I0fAAAAAGs_biBQpThbUVoaD4bsjA-D72bY";
+    axios
+      .post("/login", data)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.error) {
+          setMsg((prev) => [...prev, res.data.error]);
+        } else if (res.data.ban) {
+          setMsg((prev) => [...prev, res.data.ban]);
+        } else {
 
-    // if (isCatptcha) {
-      axios
-        .post("/login", data)
-        .then((res) => {
-          console.log(res.data);
-          if (res.data.error) {
-            setMsg((prev) => [...prev, res.data.error]);
-            // console.log(res.data.error);
-          } else if (res.data.ban) {
-            setMsg((prev) => [...prev, res.data.ban]);
+          Cookies.set("token", res.data.token, { expires: 5 });
+          Cookies.set("role", res.data.user.role, { expires: 5 });
+
+          if (
+            res.data.user.role === "moderator" ||
+            res.data.user.role === "admin"
+          ) {
+            window.location.href = "/moderator";
           } else {
-            // console.log(res.data);
-            // setUser(res.data.user);
-            // setToken(res.data.token);
-
-            // localStorage.setItem("token", res.data.token);
-            // localStorage.setItem("role", res.data.user.role);
-            Cookies.set("token", res.data.token, { expires: 5 });
-            Cookies.set("role", res.data.user.role, { expires: 5 });
-
-            if (
-              res.data.user.role === "moderator" ||
-              res.data.user.role === "admin"
-            ) {
-              window.location.href = "/moderator";
-            } else {
-              window.location.href = "/profile";
-            }
-            setUsername("");
-            setPassword("");
-            setIsCatptcha(false);
+            window.location.href = "/profile";
           }
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err.response.data.message) {
-            setMsg((prev) => [...prev, err.response.data.message]);
-          }
-          if (err.response.data.error) {
-            setMsg((prev) => [...prev, err.response.data.error]);
-          }
-        });
+          setUsername("");
+          setPassword("");
+        }
+      })
+      .catch((err) => {
+        if (err.response.data.message) {
+          setMsg((prev) => [...prev, err.response.data.message]);
+        }
+        if (err.response.data.error) {
+          setMsg((prev) => [...prev, err.response.data.error]);
+        }
+      });
     // }
   };
-
-  function onCaptchaChange(value) {
-    setIsCatptcha(true);
-    // console.log("Captcha value:", value);
-  }
 
   return (
     <div className="flex flex-col w-100 h-screen">
@@ -104,25 +87,12 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          {/* <ReCAPTCHA
-            sitekey="6Lek_I0fAAAAAFKQ_9bWD62yBEam1K4B68aYmeDt"
-            onChange={onCaptchaChange}
-            onExpired={() => setIsCatptcha(false)}
-          /> */}
-
           <button
             onClick={(e) => handleSubmit(e)}
             className="w-full text-center py-3 rounded bg-green text-indigo-800 bg-white font-bold my-1"
-            // disabled={!isCatptcha}
           >
             Connexion
           </button>
-          {/* <div className="flex gap-4 mt-4 items-center">
-            <p className="text-white">Vous n'avez pas encore de compte ?</p>
-            <a href="/register" className="text-blue-500 font-bold">
-              Enregistrez vous
-            </a>
-          </div> */}
         </div>
       </div>
     </div>

@@ -35,8 +35,6 @@ export default function Dashboard() {
   
 
   const logout = () => {
-    // localStorage.removeItem("role");
-    // localStorage.removeItem("token");
     Cookies.remove("token");
     Cookies.remove("role");
 
@@ -154,6 +152,8 @@ export default function Dashboard() {
                     </span>
                   </a>
                 </li>
+
+                {/* series */}
                 <li
                   className={`mr-3 flex-1 ${
                     url.includes("series") ? "active" : ""
@@ -169,6 +169,10 @@ export default function Dashboard() {
                     </span>
                   </a>
                 </li>
+
+             
+
+                {/* Actors */}
                 <li
                   className={`mr-3 flex-1 ${
                     url.includes("actors") ? "active" : ""
@@ -323,7 +327,7 @@ export default function Dashboard() {
             <Route path="/moderator/categories">
               <IndexCategories />
             </Route>
-
+      
             {/* Categories Routes */}
             <Route path="/moderator/actors">
               <IndexActor />
