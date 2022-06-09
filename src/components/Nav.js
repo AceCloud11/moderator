@@ -1,24 +1,23 @@
-import React, { useContext } from 'react';
-import './css/nav.scss';
+import React, { useContext } from "react";
+import "./css/nav.scss";
 import { ImEqualizer, ImCross } from "react-icons/im";
-import UserContext from '../Context/UserContext';
+import UserContext from "../Context/UserContext";
 
 export default function Nav({ handleMenuClick, menuState }) {
-    const menu = menuState ? (
-      <ImCross size={24} color="#fff" onClick={handleMenuClick}/>
-    ) : (
-      <ImEqualizer size={24} color="#fff" onClick={handleMenuClick} />
-    );
+  const menu = menuState ? (
+    <ImCross size={24} color="#fff" onClick={handleMenuClick} />
+  ) : (
+    <ImEqualizer size={24} color="#fff" onClick={handleMenuClick} />
+  );
 
-    const user = useContext(UserContext);
+  const user = useContext(UserContext);
 
-    // console.log(user);
-
+  // console.log(user);
 
   return (
     <div className="navbar text-white flex justify-between items-center">
       <a href="/" className=" w-28 items-center hidden md:flex">
-        <img src="/wiflix.png" alt="" className="w-full" />
+        <h1>Logo</h1>
       </a>
 
       <ul className="flex gap-4 ">
