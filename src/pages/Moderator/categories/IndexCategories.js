@@ -128,13 +128,10 @@ export default function IndexCategories() {
       });
   };
 
-  const searchCats = () => {
-    if (search == "") {
-      fetchCats();
-    }else{
-      const filteredCats = cats.filter((el) => el.name.includes(search, 0));
+  const searchCats = (val) => {
+      const filteredCats = cats.filter((el) => el.name.includes(val, 0));
       setCats(filteredCats);
-    }
+   
   }
 
   useEffect(async () => {
@@ -159,33 +156,39 @@ export default function IndexCategories() {
       <ToastContainer />
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <div className="p-4 flex flex-wrap justify-between items-center gap-4 space-y-4">
-          <h1 className="text-center text-xl font-bold">
-            Categories
-          </h1>
+          <h1 className="text-center text-xl font-bold">Categories</h1>
 
           <div className="flex gap-2">
-            <input
-              type="text"
-              id="table-search"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="rechercher dans les catégories ..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyUp={e => {
-                if(e.key == "Enter"){
-                  searchCats();
-                }
-              }}
-            />
-            <button
-              className="p-2 bg-blue-500 text-white font-bold rounded-md"
-              onClick={(e) => {
-                e.preventDefault();
-                
-              }}
-            >
-              Recherche
-            </button>
+            <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 flex justify-between">
+              <input
+                type="text"
+                className="flex-grow bg-gray-50 focus:outline-none"
+                placeholder="rechercher dans les catégories ..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCats((old) => [
+                    ...old.filter((el) => el.name.includes(e.target.value)),
+                  ]);
+                }}
+                onKeyUp={e => {
+                  if (e.key == "Enter") {
+                    setSearch(e.target.value);
+                    setCats((old) => [
+                      ...old.filter((el) => el.name.includes(e.target.value)),
+                    ]);
+                  }
+                }}
+              />
+              <i
+                className="fa fa-trash text-xl cursor-pointer"
+                title="clear search"
+                onClick={() => {
+                  setSearch("");
+                  fetchCats(1);
+                }}
+              ></i>
+            </div>
           </div>
           <button
             className="block px-4 py-2 rounded-md bg-indigo-600 text-white"

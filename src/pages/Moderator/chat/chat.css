@@ -18,3 +18,12 @@
 .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
   border-radius: 0.25rem;
 }
+
+.my-msg i.msg-trash{
+  display: none;
+  
+} 
+
+.my-msg:hover .msg-trash{
+  display: block;
+}

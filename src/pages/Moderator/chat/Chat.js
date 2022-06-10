@@ -5,7 +5,9 @@ import UserContext from "../../../Context/UserContext";
 import "./chat.css";
 
 import { CgMoreO } from "react-icons/cg";
+import { BsTrash } from "react-icons/bs";
 import Picker from "emoji-picker-react";
+import Message from "./components/Message";
 
 export default function Chat() {
   const [user, setUser] = useState();
@@ -14,6 +16,7 @@ export default function Chat() {
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
+  const [options, setOptions] = useState(false);
 
   const onEmojiClick = (event, emojiObject) => {
     setMessage((old) => old + " " + emojiObject.emoji);
@@ -39,6 +42,20 @@ export default function Chat() {
       .catch(console.error);
   };
 
+  function getRandomColor(username) {
+    var hash = 0;
+    for (var i = 0; i < username.length; i++) {
+      hash = username.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    var colour = "#";
+    for (var i = 0; i < 3; i++) {
+      var value = (hash >> (i * 8)) & 0xff;
+      colour += ("00" + value.toString(16)).substr(-2);
+    }
+    return colour;
+  }
+  
+
   // fetch messages
   const fetchMessages = async () => {
     await axios({
@@ -52,6 +69,10 @@ export default function Chat() {
       },
     })
       .then((res) => {
+        res.data.messages.forEach(el => {
+          el.bg = getRandomColor(el.username);
+        });
+        // console.log(res.data.messages);
         setMessages(res.data.messages.reverse());
         setMore(res.data.loadMore);
       })
@@ -111,6 +132,26 @@ export default function Chat() {
       });
   };
 
+  //delete message
+  const deleteMessage = async (id) => {
+    await axios({
+      url: "/moderator/messages/" + id,
+      method: "delete",
+      responseType: "json",
+      headers: {
+        Authorization: ` Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+        .then((res) => {
+          fetchMessages();
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+  }
+
   useEffect(async () => {
     await fetchProfile();
     await fetchMessages();
@@ -146,80 +187,15 @@ export default function Chat() {
           {messages.length
             ? messages.map((msg) =>
                 msg.username === user.username ? (
-                  <div
-                    className="chat-message flex items-start justify-end"
-                    key={msg.id}
-                  >
-                    <div className="flex flex-col-reverse">
-                      <div className="flex flex-col space-y-2 text-xs  mx-2 order-2 items-start">
-                        <div>
-                          <span
-                            className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-green-600 text-white text-lg font-semibold"
-                            title={msg.username}
-                          >
-                            {msg.text}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="">
-                        <span className="text-xs text-gray-400 italic">
-                          {msg.updated_at.split("T")[1].split(":")[0] +
-                            ":" +
-                            msg.updated_at.split("T")[1].split(":")[1]}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div
-                        className="bg-blue-500 flex items-center justify-center"
-                        style={{ width: 30, height: 30, borderRadius: "50%" }}
-                        title={msg.username}
-                      >
-                        <div className="text-white font-bold">
-                          {msg.username[0].toUpperCase()}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <Message msg={msg} fetch={fetchMessages} isMine="true"/>
                 ) : (
-                  <div className="chat-message flex items-start" key={msg.id}>
-                    <div>
-                      <div
-                        className="bg-sky-500 flex items-center justify-center"
-                        style={{ width: 30, height: 30, borderRadius: "50%" }}
-                        title={msg.username}
-                      >
-                        <div className="text-white font-bold">
-                          {msg.username[0].toUpperCase()}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col-reverse items-start">
-                      <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
-                        <div>
-                          <span
-                            className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-black text-lg font-semibold"
-                            title={msg.username}
-                          >
-                            {msg.text}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="">
-                        <span className="text-xs text-gray-400 italic">
-                          {msg.updated_at.split("T")[1].split(":")[0] +
-                            ":" +
-                            msg.updated_at.split("T")[1].split(":")[1]}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                 <Message msg={msg} fetch={fetchMessages} isMine="false"/>
                 )
               )
             : null}
         </div>
 
-        <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0 relative">
+        <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0 relative sticky bottom-20 md:bottom-0 pb-4 bg-white">
           <div
             className="absolute bottom-24 z-40"
             style={{ display: showEmoji ? "block" : "none" }}
@@ -227,27 +203,7 @@ export default function Chat() {
             <Picker onEmojiClick={onEmojiClick} />
           </div>
           <div className="relative md:flex bg-gray-200 p-3 rounded-md space-y-4">
-            {/* <span className="absolute inset-y-0 flex items-center">
-               {/* <button
-                 type="button"
-                 className="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
-               >
-                 <svg
-                   xmlns="http://www.w3.org/2000/svg"
-                   fill="none"
-                   viewBox="0 0 24 24"
-                   stroke="currentColor"
-                   className="h-6 w-6 text-gray-600"
-                 >
-                   <path
-                     strokeLinecap="round"
-                     strokeLinejoin="round"
-                     strokeWidth="2"
-                     d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                   ></path>
-                 </svg>
-               </button> */}
-            {/* </span>  */}
+
             <textarea
               rows={1}
               type="text"

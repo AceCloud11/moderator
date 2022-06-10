@@ -148,8 +148,8 @@ export default class IndexMovies extends Component {
     })
       .then(async (response) => {
       //  await this.fetchMovies(1);
-        if (response.data.message) {
-          this.notify(response.data.message);
+        if (response.data.success) {
+          this.notify(response.data.success);
         }else{
           toast.error(response.data.error);
         }

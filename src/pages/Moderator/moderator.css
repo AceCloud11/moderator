@@ -16,3 +16,17 @@
   border-bottom: 2px solid rgb(32, 149, 228);
   background-color: #3e516a;
 }
+
+@media screen and (max-width: 760px) {
+  .active {
+    border-bottom: 0px;
+    /*border-top: 5px solid #0043a4;*/
+    background-color: transparent;
+  }
+  .active a i{
+    color: #0043a4;
+  }
+  .active a span{
+    color: #0043a4;
+  }
+}

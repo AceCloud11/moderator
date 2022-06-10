@@ -23,7 +23,6 @@ export default function IndexSlider() {
       },
     })
       .then(async (res) => {
-        console.log(res.data);
         setSlides(res.data);
       })
       .catch((err) => {
@@ -44,11 +43,11 @@ export default function IndexSlider() {
     })
       .then(async (response) => {
         //  await this.fetchMovies(1);
-        if (response.data.message) {
+        if (response.data.success) {
           fetchSlides();
-          toast.success(response.data.message);
+          toast.success(response.data.success);
         } else {
-          toast.error(response.data.error);
+          toast.error(response.data.error ?? response.data.message);
         }
       })
       .catch((error) => {

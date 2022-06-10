@@ -262,9 +262,9 @@ export default function IndexComments() {
               <th scope="col" className="px-6 py-3">
                 Text du commentaire
               </th>
-              <th scope="col" className="px-6 py-3">
-                Nom d'utilisateur
-              </th>
+              {/*<th scope="col" className="px-6 py-3">*/}
+              {/*  Nom d'utilisateur*/}
+              {/*</th>*/}
 
               <th scope="col" className="px-6 py-3 text-center">
                 <span>Actions</span>
@@ -301,12 +301,12 @@ export default function IndexComments() {
                         dangerouslySetInnerHTML={{ __html: comment.text }}
                       ></p>
                     </th>
-                    <th
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 dark:text-white"
-                    >
-                      <p className=" p-4">{comment.username}</p>
-                    </th>
+                    {/*<th*/}
+                    {/*  scope="row"*/}
+                    {/*  className="px-6 py-4 font-medium text-gray-900 dark:text-white"*/}
+                    {/*>*/}
+                    {/*  <p className=" p-4">{comment.username}</p>*/}
+                    {/*</th>*/}
 
                     <td className="px-6 py-4 text-center">
                       {comment.is_approved == 1 ? (

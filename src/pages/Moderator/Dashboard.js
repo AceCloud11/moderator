@@ -105,7 +105,7 @@ export default function Dashboard() {
 
       <div className="flex flex-col md:flex-row bg-gray-800 ">
         <nav className="alternative nav pt-12 bg-gray-800">
-          <div className="bg-gray-800 shadow-xl h-20 fixed bottom-0 mt-20 md:relative md:h-screen z-10 w-full md:w-60 content-center overflow-scroll no-scrollbar">
+          <div className="bg-gray-800  h-20 fixed bottom-0 mt-20 md:relative md:h-screen z-10 w-full md:w-60 content-center overflow-scroll no-scrollbar">
             <div className="md:mt-12 md:w-60 md:fixed md:left-0 md:top-0 content-center md:content-start text-left justify-between">
               <ul
                 className="list-reset flex flex-row md:flex-col pt-3 md:py-3 px-1 md:px-2 text-center md:text-left"
@@ -290,7 +290,7 @@ export default function Dashboard() {
           </div>
         </nav>
 
-        <section className="w-full py-28 px-8 bg-white container mx-auto">
+        <section className="w-full py-28 px-8 bg-white container mx-auto overflow-x-scroll">
           <Switch>
             {/* Movies Routes */}
             <Route exact path="/moderator/movies">

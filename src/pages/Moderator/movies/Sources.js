@@ -29,6 +29,7 @@ export default function Sources() {
   const [errors, setErrors] = useState([]);
   const [srcId, setSrcId] = useState(null);
   const [hosts, setHosts] = useState([]);
+  const [vf, setVf] = useState(true);
 
   // change demain name
   const [demain, setDemain] = useState('');
@@ -56,17 +57,17 @@ export default function Sources() {
     })
       .then(async (res) => {
         setTitle(res.data.title);
-        setSources(res.data.movieSources);
+        setSources(res.data.sources);
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        console.log(error);
       });
   };
 
 
   const addSources = async () => {
     await setErrors([]);
-    if (src === "") {
+    if (src === "" || name === "") {
       await setErrors((old) => [...old, "Tout les champs sont obligatoire"]);
       return;
     }
@@ -78,26 +79,22 @@ export default function Sources() {
       return;
     }
 
-    // case sinarios
-    // https://demain.com name = diffrent
-    // https://sub.demain.com
-    // https://demain.com.orguptostream
-    // https://sub.demain.com.org
-
     // extract name from the url
     let n = src.split("//")[1].split("/")[0];
 
     if (!hosts.includes(n)) {
-      await setErrors((old) => [...old, `la source ${n} n'est pas autorisée`]);
+      await setErrors((old) => [...old, `le domain ${n} n'est pas autorisée`]);
       return;
     }
+
 
     await axios({
       url: "/moderator/movie-sources/" + id,
       method: "post",
       responseType: "json",
       data: {
-        name: n,
+        name,
+        vf,
         src,
       },
       headers: {
@@ -107,12 +104,12 @@ export default function Sources() {
       },
     })
       .then(async (response) => {
-        toast.success(response.data.message);
+        toast.success(response.data.success);
         setSrc("");
         setErrors([]);
         setName("");
         onCloseCreate();
-        fetchSources();
+        await fetchSources();
       })
       .catch((error) => {
         toast.error(error.response.data.message);
@@ -146,6 +143,7 @@ export default function Sources() {
       responseType: "json",
       data: {
         name,
+        vf,
         src,
       },
       headers: {
@@ -155,7 +153,7 @@ export default function Sources() {
       },
     })
       .then(async (response) => {
-        toast.success(response.data.message);
+        toast.success(response.data.success);
         setSrc("");
         setErrors([]);
         setName("");
@@ -183,7 +181,7 @@ export default function Sources() {
       },
     })
       .then(async (response) => {
-        toast.success(response.data.message);
+        toast.success(response.data.success);
         fetchSources();
       })
       .catch((error) => {
@@ -257,12 +255,12 @@ export default function Sources() {
           >
             Ajouter un lien
           </button>
-          <button
+          {/* <button
             className="block px-4 py-2 rounded-md bg-indigo-600 text-white"
             onClick={onOpenChangeDemainName}
           >
             Change nom de demain
-          </button>
+          </button> */}
         </div>
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -273,6 +271,10 @@ export default function Sources() {
 
               <th scope="col" className="px-6 py-3">
                 Nom
+              </th>
+
+              <th scope="col" className="px-6 py-3">
+                Version
               </th>
 
               <th scope="col" className="p-4">
@@ -301,6 +303,14 @@ export default function Sources() {
                     >
                       {src.name}
                     </th>
+
+                    <th
+                        scope="row"
+                        className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                    >
+                      {src.vf ? "VF" : "VOSTFR"}
+                    </th>
+
                     <td className="w-4 p-4 text-gray-900">{src.src}</td>
 
                     <td className="px-6 py-4 text-center">
@@ -311,6 +321,7 @@ export default function Sources() {
                           setName(src.name);
                           setSrc(src.src);
                           setSrcId(src.id);
+                          setVf(src.vf == 1 ? true : false);
                           onOpenEdit();
                         }}
                       >
@@ -337,6 +348,7 @@ export default function Sources() {
           onCloseCreate();
           await setSrc("");
           await setName("");
+          await setVf(true);
         }}
       >
         <ModalOverlay />
@@ -347,13 +359,30 @@ export default function Sources() {
             <div>
               <form action="" className="space-y-4">
                 <div className="flex gap-4 flex-wrap">
-                  {/* <input
+                  <input
                     type="text"
                     placeholder="Nom du lecteur"
                     className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                  /> */}
+                  />
+
+                  {/* vf */}
+                  <div className="flex gap-4">
+                    <label className="label cursor-pointer space-x-2">
+                      <span className="label-text">VF</span>
+                      <input
+                        type="checkbox"
+                        checked={vf}
+                        value={vf}
+                        onChange={(e) => {
+                          setVf(!vf);
+                        }}
+                        className="checkbox"
+                      />
+                    </label>
+                  </div>
+
                   <input
                     type="text"
                     placeholder="lien"
@@ -361,7 +390,7 @@ export default function Sources() {
                     value={src}
                     onChange={(e) => setSrc(e.target.value)}
                   />
-                  <Hosts hosts={hosts} />
+                  {/* <Hosts hosts={hosts} /> */}
                 </div>
 
                 <div className="space-y-4 my-4">
@@ -390,6 +419,7 @@ export default function Sources() {
                 onCloseCreate();
                 await setSrc("");
                 await setName("");
+                setVf(true);
                 setErrors([]);
               }}
             >
@@ -402,82 +432,17 @@ export default function Sources() {
         </ModalContent>
       </Modal>
 
-      {/* Create Episode Modal */}
-      <Modal
-        isOpen={isOpenChangeDemainName}
-        onClose={async () => {
-          onCloseChangeDemainName();
-          await setDemain("");
-          await setDemainName("");
-        }}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Changer le nom de Lecteur</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <div>
-              <form action="" className="space-y-4">
-                <div className="flex gap-4 flex-wrap">
-                  <input
-                    type="text"
-                    placeholder="demain"
-                    className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                    value={demain}
-                    onChange={(e) => setDemain(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="nom"
-                    className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                    value={demainName}
-                    onChange={(e) => setDemainName(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-4 my-4">
-                  {errors.length
-                    ? errors.map((error) => (
-                        <Alert
-                          status="error"
-                          className="rounded-md"
-                          key={error}
-                        >
-                          <AlertIcon />
-                          {error}
-                        </Alert>
-                      ))
-                    : null}
-                </div>
-              </form>
-            </div>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              colorScheme="blue"
-              mr={3}
-              onClick={async () => {
-                onCloseChangeDemainName();
-                await setDemain("");
-                await setDemainName("");
-                setErrors([]);
-              }}
-            >
-              Close
-            </Button>
-            <Button colorScheme="linkedin" onClick={changeDemainName}>
-              Changer
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
 
       {/* Update Episode Modal */}
       <Modal
         isOpen={isOpenEdit}
         onClose={() => {
           onCloseEdit();
+          setName('');
+          setErrors([]);
+          setSrc('');
+          setSrcId(null);
+          setVf(true);
         }}
       >
         <ModalOverlay />
@@ -496,6 +461,23 @@ export default function Sources() {
                     readOnly
                     onChange={(e) => setName(e.target.value)}
                   />
+
+                  {/* vf */}
+                  <div className="flex gap-4">
+                    <label className="label cursor-pointer space-x-2">
+                      <span className="label-text">VF</span>
+                      <input
+                          type="checkbox"
+                          checked={vf}
+                          value={vf}
+                          onChange={(e) => {
+                            setVf(!vf);
+                          }}
+                          className="checkbox"
+                      />
+                    </label>
+                  </div>
+
                   <input
                     type="text"
                     placeholder="Source"
@@ -504,7 +486,7 @@ export default function Sources() {
                     onChange={(e) => setSrc(e.target.value)}
                   />
 
-                  <Hosts hosts={hosts} />
+                  {/* <Hosts hosts={hosts} /> */}
                 </div>
 
                 <div className="space-y-4 my-4">
@@ -531,9 +513,11 @@ export default function Sources() {
               mr={3}
               onClick={async () => {
                 onCloseEdit();
-                setName("");
-                setSrc("");
+                setName('');
+                setErrors([]);
+                setSrc('');
                 setSrcId(null);
+                setVf(true);
               }}
             >
               Close
