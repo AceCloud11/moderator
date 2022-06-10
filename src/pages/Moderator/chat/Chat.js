@@ -170,7 +170,7 @@ export default function Chat() {
       >
         <div
           id="messages"
-          className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
+          className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch pb-24 md:pb-0"
         >
           {more ? (
             <div className="flex justify-center">
@@ -195,7 +195,7 @@ export default function Chat() {
             : null}
         </div>
 
-        <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0 relative sticky bottom-20 md:bottom-0 pb-4 bg-white">
+        <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0 relative fixed bottom-24 md:bottom-0 pb-4 bg-white">
           <div
             className="absolute bottom-24 z-40"
             style={{ display: showEmoji ? "block" : "none" }}
