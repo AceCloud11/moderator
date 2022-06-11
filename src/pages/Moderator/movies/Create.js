@@ -569,7 +569,7 @@ export default class Create extends Component {
 
           <fieldset className="border-2 border-gray-300 rounded-md p-4 space-y-4">
             <legend className="text-xl font-semibold">
-              Actors & Directors
+              Acteurs & Directeurs
             </legend>
             <h1 className="text-xl font-bold">Actors</h1>
 
@@ -618,7 +618,7 @@ export default class Create extends Component {
                 : null}
             </article>
 
-            <h1 className="text-xl font-bold">Directors</h1>
+            <h1 className="text-xl font-bold">Directeurs</h1>
 
             {this.state.directorsM.length ? (
               <button
@@ -759,56 +759,6 @@ export default class Create extends Component {
             </article>
           </fieldset>
 
-          {/* <fieldset className="border-2 border-gray-300 rounded-md p-4">
-            <legend className="text-xl font-semibold">Sources</legend>
-            <div className="flex gap-4">
-              <input
-                type="text"
-                placeholder="Nom de la source"
-                className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                value={this.state.srcName}
-                onChange={(e) => this.setState({ srcName: e.target.value })}
-              />
-              <input
-                type="text"
-                placeholder="Source url"
-                className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                value={this.state.src}
-                onChange={(e) => this.setState({ src: e.target.value })}
-              />
-              <button
-                className="bg-blue-800 p-2 rounded-md border-0"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (this.state.srcName !== "" && this.state.src !== "") {
-                    this.setState({
-                      sources: [
-                        ...this.state.sources,
-                        this.state.srcName + "|" + this.state.src,
-                      ],
-                      srcName: "",
-                      src: "",
-                    });
-                  }
-                }}
-              >
-                <i className="fa-solid fa-plus text-white text-2xl"></i>
-              </button>
-            </div>
-
-            <ul className="space-y-3 mt-8">
-              {this.state.sources.length
-                ? this.state.sources.map((src, key) => (
-                    <li
-                      className="font-semibold text-sm md:text-md text-wrap text-blue-400"
-                      key={key}
-                    >
-                      {src}
-                    </li>
-                  ))
-                : null}
-            </ul>
-          </fieldset> */}
 
           <div className="space-y-4 my-4">
             <Error errors={this.state.errors} />

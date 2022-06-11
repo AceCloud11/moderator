@@ -26,7 +26,6 @@ export default function Login() {
     axios
       .post("/login", data)
       .then((res) => {
-        console.log(res.data);
         if (res.data.error) {
           setMsg((prev) => [...prev, res.data.error]);
         } else if (res.data.ban) {

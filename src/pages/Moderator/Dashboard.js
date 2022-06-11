@@ -35,11 +35,26 @@ export default function Dashboard() {
   
 
   const logout = () => {
-    Cookies.remove("token");
-    Cookies.remove("role");
+    let token = Cookies.get('token');
+    let tokenId = token.split('|')[0];
+    axios({
+      url: '/logout',
+      data: {tokenId},
+      method: "post",
+      responseType: "json",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    }).then(res => {
+      if (res.data.success){
+        Cookies.remove("token");
+        Cookies.remove("role");
+        window.location.href = "/";
+      }
+    })
 
-   
-    window.location.href = "/";
   };
 
   useEffect(() => {
@@ -290,7 +305,7 @@ export default function Dashboard() {
           </div>
         </nav>
 
-        <section className="w-full py-24 px-8 bg-white container mx-auto overflow-x-scroll overflow-y-hidden ">
+        <section className="w-full py-24 px-8 bg-white container mx-auto overflow-x-scroll relative" style={{ minHeight: '90vh'}}>
           <Switch>
             {/* Movies Routes */}
             <Route exact path="/moderator/movies">

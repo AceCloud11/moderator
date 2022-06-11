@@ -279,7 +279,7 @@ export default class Index extends Component {
                   Langue
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  <span className="sr-only">Edit</span>
+                  <span className="sr-only">Éditer</span>
                 </th>
               </tr>
             </thead>
@@ -306,7 +306,7 @@ export default class Index extends Component {
                           href={`/moderator/series/${serie.id}/edit`}
                           className="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"
                         >
-                          Edit
+                          Éditer
                         </a>
 
                         <button
@@ -317,12 +317,12 @@ export default class Index extends Component {
                         </button>
 
                         {/* Display the delete button if admin */}
-                          <button
-                            className="font-medium text-red-600 dark:text-blue-500 hover:underline"
-                            onClick={() => this.deleteSerie(serie.id)}
-                          >
-                            Delete
-                          </button>
+                        <button
+                          className="font-medium text-red-600 dark:text-blue-500 hover:underline"
+                          onClick={() => this.deleteSerie(serie.id)}
+                        >
+                          Supprimer
+                        </button>
 
                         <a
                           href={`/moderator/series/${serie.id}/episodes`}

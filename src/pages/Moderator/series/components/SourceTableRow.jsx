@@ -142,7 +142,7 @@ export default function SourceTableRow( { source, token, hosts, fetch, makeToast
                         onOpenEditSource();
                     }}
                 >
-                    Edit
+                    Éditer
                 </button>
                 <button
                     className="font-medium text-red-600 dark:text-blue-500 hover:underline mr-3"
@@ -151,7 +151,7 @@ export default function SourceTableRow( { source, token, hosts, fetch, makeToast
                         deleteEpisodeSource(source.id);
                     }}
                 >
-                    Delete
+                    Effacer
                 </button>
             </td>
         </tr>

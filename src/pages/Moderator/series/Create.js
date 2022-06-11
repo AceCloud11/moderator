@@ -564,9 +564,9 @@ export default class Create extends Component {
 
           <fieldset className="border-2 border-gray-300 rounded-md p-4 space-y-4">
             <legend className="text-xl font-semibold">
-              Actors & Directors
+              Acteurs & Directeurs
             </legend>
-            <h1 className="text-xl font-bold">Actors</h1>
+            <h1 className="text-xl font-bold">Acteurs</h1>
             {this.state.actorsM.length ? (
               <button
                 className="px-4 py-2 rounded-md bg-indigo-700 text-white font-semibold my-4"
@@ -612,43 +612,9 @@ export default class Create extends Component {
                 : null}
             </article>
 
-            {/*  
-            <fieldset className="border-2 border-gray-300 rounded-md p-4">
-              <legend className="text-xl font-semibold">Add Actor</legend>
-              <article className="flex gap-4 flex-wrap">
-                <input
-                  type="text"
-                  placeholder="actor name"
-                  className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                  value={this.state.actor}
-                  onChange={(e) => this.setState({ actor: e.target.value })}
-                />
-                <button
-                  className="p-2 rounded-md bg-blue-500 text-white font-bold"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (
-                      !this.state.actors.includes(this.state.actor) &&
-                      this.state.actor !== ""
-                    ) {
-                      this.setState(
-                        {
-                          actors: [...this.state.actors, this.state.actor],
-                          actorsM: [...this.state.actorsM, this.state.actor],
-                          actor: "",
-                        },
-                        () => console.log(this.state.actors)
-                      );
-                    }
-                  }}
-                >
-                  Add Actor
-                </button>
-              </article>
-            </fieldset>
-            */}
 
-            <h1 className="text-xl font-bold">Directors</h1>
+
+            <h1 className="text-xl font-bold">Directeurs</h1>
             {this.state.directorsM.length ? (
               <button
                 className="px-4 py-2 rounded-md bg-indigo-700 text-white font-semibold my-4"
@@ -695,38 +661,7 @@ export default class Create extends Component {
                 : null}
             </article>
 
-            {/* <fieldset className="border-2 border-gray-300 rounded-md p-4">
-              <legend className="text-xl font-semibold">Add Director</legend>
-              <article className="flex gap-4 flex-wrap">
-                <input
-                  type="text"
-                  placeholder="actor name"
-                  className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                  value={this.state.director}
-                  onChange={(e) => this.setState({ director: e.target.value })}
-                />
-                <button
-                  className="p-2 rounded-md bg-blue-500 text-white font-bold"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (
-                      !this.state.directorsM.includes(this.state.director) &&
-                      this.state.director !== ""
-                    ) {
-                      this.setState({
-                        directorsM: [
-                          ...this.state.directorsM,
-                          this.state.director,
-                        ],
-                        director: "",
-                      });
-                    }
-                  }}
-                >
-                  Add Director
-                </button>
-              </article>
-            </fieldset> */}
+
           </fieldset>
 
           <div className="flex gap-4">

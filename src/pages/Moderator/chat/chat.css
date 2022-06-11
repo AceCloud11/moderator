@@ -19,11 +19,12 @@
   border-radius: 0.25rem;
 }
 
-.my-msg i.msg-trash{
-  display: none;
-  
-} 
+.chat-container{
+  height: 80vh;
+}
 
-.my-msg:hover .msg-trash{
-  display: block;
+@media screen and (max-width: 760px) {
+  .chat-container{
+    height: 75vh;
+  }
 }

@@ -114,7 +114,6 @@ class Edit extends Component {
           overview: res.data.description,
           image: res.data.img,
           tags: res.data.tags,
-          tags: res.data.tags,
           bg: res.data.bg
         });
         // console.log(this.state.id);
@@ -291,7 +290,7 @@ class Edit extends Component {
 
           <fieldset className="border-2 border-gray-300 rounded-md p-4 space-y-4">
             <legend className="text-xl font-semibold">
-              Actors & Directors
+              Acteurs & Directeurs
             </legend>
             <h1 className="text-xl font-bold">Actors</h1>
 
@@ -409,7 +408,7 @@ class Edit extends Component {
                 : null}
             </article>
             <fieldset className="border-2 border-gray-300 rounded-md p-4">
-              <legend className="text-xl font-semibold">Add Director</legend>
+              <legend className="text-xl font-semibold">Ajouter un Directeur</legend>
               <article className="flex gap-4 flex-wrap">
                 <input
                   type="text"
@@ -439,7 +438,7 @@ class Edit extends Component {
                     }
                   }}
                 >
-                  Add Director
+                  Ajouter
                 </button>
               </article>
             </fieldset>

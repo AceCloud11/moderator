@@ -237,9 +237,9 @@ class Edit extends Component {
 
           <fieldset className="border-2 border-gray-300 rounded-md p-4 space-y-4">
             <legend className="text-xl font-semibold">
-              Actors & Directors
+              Acteurs & Directeurs
             </legend>
-            <h1 className="text-xl font-bold">Actors</h1>
+            <h1 className="text-xl font-bold">Acteurs</h1>
 
             <article className="flex gap-4 flex-wrap">
               {this.state.actorsM.length
@@ -280,7 +280,7 @@ class Edit extends Component {
             {/* ADD ACTOR */}
 
             <fieldset className="border-2 border-gray-300 rounded-md p-4">
-              <legend className="text-xl font-semibold">Add Actor</legend>
+              <legend className="text-xl font-semibold">Ajouter Acteur</legend>
               <article className="flex gap-4 flex-wrap">
                 <input
                   type="text"
@@ -308,13 +308,13 @@ class Edit extends Component {
                     }
                   }}
                 >
-                  Add Actor
+                  Ajouter
                 </button>
               </article>
             </fieldset>
             {/* END ADD ACTOR */}
 
-            <h1 className="text-xl font-bold">Directors</h1>
+            <h1 className="text-xl font-bold">Directeurs</h1>
 
             <article className="flex gap-4 flex-wrap">
               {this.state.directorsM.length
@@ -357,7 +357,7 @@ class Edit extends Component {
 
             {/* ADD DIRECTOR */}
             <fieldset className="border-2 border-gray-300 rounded-md p-4">
-              <legend className="text-xl font-semibold">Add Director</legend>
+              <legend className="text-xl font-semibold">Ajouter Directeur</legend>
               <article className="flex gap-4 flex-wrap">
                 <input
                   type="text"
@@ -388,7 +388,7 @@ class Edit extends Component {
                     }
                   }}
                 >
-                  Add Director
+                  Ajouter
                 </button>
               </article>
             </fieldset>

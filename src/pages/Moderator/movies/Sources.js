@@ -305,8 +305,8 @@ export default function Sources() {
                     </th>
 
                     <th
-                        scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
                     >
                       {src.vf ? "VF" : "VOSTFR"}
                     </th>
@@ -325,13 +325,13 @@ export default function Sources() {
                           onOpenEdit();
                         }}
                       >
-                        Edit
+                        Modifier
                       </button>
                       <button
                         className="font-medium text-red-600 dark:text-blue-500 hover:underline mr-3"
                         onClick={(e) => deleteSources(src.id)}
                       >
-                        Delete
+                        Supprimer
                       </button>
                     </td>
                   </tr>
@@ -432,15 +432,14 @@ export default function Sources() {
         </ModalContent>
       </Modal>
 
-
       {/* Update Episode Modal */}
       <Modal
         isOpen={isOpenEdit}
         onClose={() => {
           onCloseEdit();
-          setName('');
+          setName("");
           setErrors([]);
-          setSrc('');
+          setSrc("");
           setSrcId(null);
           setVf(true);
         }}
@@ -467,13 +466,13 @@ export default function Sources() {
                     <label className="label cursor-pointer space-x-2">
                       <span className="label-text">VF</span>
                       <input
-                          type="checkbox"
-                          checked={vf}
-                          value={vf}
-                          onChange={(e) => {
-                            setVf(!vf);
-                          }}
-                          className="checkbox"
+                        type="checkbox"
+                        checked={vf}
+                        value={vf}
+                        onChange={(e) => {
+                          setVf(!vf);
+                        }}
+                        className="checkbox"
                       />
                     </label>
                   </div>
@@ -513,9 +512,9 @@ export default function Sources() {
               mr={3}
               onClick={async () => {
                 onCloseEdit();
-                setName('');
+                setName("");
                 setErrors([]);
-                setSrc('');
+                setSrc("");
                 setSrcId(null);
                 setVf(true);
               }}

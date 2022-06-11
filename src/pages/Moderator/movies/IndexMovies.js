@@ -301,7 +301,7 @@ export default class IndexMovies extends Component {
                           href={`/moderator/movies/${movie.id}/edit`}
                           className="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"
                         >
-                          Edit
+                          Modifier
                         </a>
 
                         <button
@@ -321,14 +321,14 @@ export default class IndexMovies extends Component {
                           // }}
                           href={`/moderator/movies/${movie.id}/sources`}
                         >
-                          Sources
+                          Les Lecteurs
                         </a>
 
                         <button
                           className="font-medium text-red-600 dark:text-blue-500 hover:underline"
                           onClick={() => this.deleteMovie(movie.id)}
                         >
-                          Delete
+                          Supprimer
                         </button>
                       </td>
                     </tr>

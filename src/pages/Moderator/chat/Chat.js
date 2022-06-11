@@ -1,6 +1,6 @@
 import { Avatar, Button } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, {Fragment, useContext, useEffect, useState} from "react";
 import UserContext from "../../../Context/UserContext";
 import "./chat.css";
 
@@ -54,7 +54,7 @@ export default function Chat() {
     }
     return colour;
   }
-  
+
 
   // fetch messages
   const fetchMessages = async () => {
@@ -163,97 +163,98 @@ export default function Chat() {
   }, []);
 
   return (
-    <div>
-      <div
-        className="flex-1 p:2 sm:p-6 justify-between flex flex-col"
-        style={{ height: 960 }}
-      >
+    <Fragment >
         <div
-          id="messages"
-          className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch pb-24 md:pb-0"
+        className="no-scrollbar pb-36 md:pb-0 chat-container overflow-y-scroll"
         >
-          {more ? (
-            <div className="flex justify-center">
-              <Button
-                leftIcon={<CgMoreO />}
-                colorScheme="cyan"
-                variant="solid"
-                onClick={loadMoreMessages}
-              >
-                Load more
-              </Button>
-            </div>
-          ) : null}
-          {messages.length
-            ? messages.map((msg) =>
-                msg.username === user.username ? (
-                  <Message msg={msg} fetch={fetchMessages} isMine="true"/>
-                ) : (
-                 <Message msg={msg} fetch={fetchMessages} isMine="false"/>
-                )
-              )
-            : null}
-        </div>
-
-        <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0 relative fixed bottom-24 md:bottom-0 pb-4 bg-white">
           <div
+              id="messages"
+              className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch "
+          >
+            {more ? (
+                <div className="flex justify-center">
+                  <Button
+                      leftIcon={<CgMoreO />}
+                      colorScheme="cyan"
+                      variant="solid"
+                      onClick={loadMoreMessages}
+                  >
+                    Load more
+                  </Button>
+                </div>
+            ) : null}
+            {messages.length
+                ? messages.map((msg) =>
+                    msg.username === user.username ? (
+                        <Message msg={msg} fetch={fetchMessages} isMine="true"/>
+                    ) : (
+                        <Message msg={msg} fetch={fetchMessages} isMine="false"/>
+                    )
+                )
+                : null}
+          </div>
+        </div>
+      <div className="border-t-2 border-gray-200 pt-4 absolute bottom-16 md:bottom-0 bg-white" style={{
+        width: '90%',
+      }}>
+        <div
             className="absolute bottom-24 z-40"
             style={{ display: showEmoji ? "block" : "none" }}
-          >
-            <Picker onEmojiClick={onEmojiClick} />
-          </div>
-          <div className="relative md:flex bg-gray-200 p-3 rounded-md space-y-4">
+        >
+          <Picker onEmojiClick={onEmojiClick} />
+        </div>
+        <div className="relative md:flex bg-gray-200 p-3 rounded-md space-y-4">
 
             <textarea
-              rows={1}
-              type="text"
-              placeholder="Rédigez votre message!"
-              className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 p-2 bg-gray-200 rounded-md py-3 resize-none "
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+                rows={1}
+                type="text"
+                placeholder="Rédigez votre message!"
+                className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 p-2 bg-gray-200 rounded-md py-3 resize-none "
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
             />
 
-            <div className="items-start inset-y-0 flex justify-end">
-              <button
+          <div className="items-start inset-y-0 flex justify-end">
+            <button
                 type="button"
                 className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
                 onClick={() => setShowEmoji(!showEmoji)}
-              >
-                <svg
+            >
+              <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                   className="h-6 w-6 text-gray-600"
                   style={{ color: showEmoji ? "tomato" : "gray" }}
-                >
-                  <path
+              >
+                <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
                     d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-              </button>
-              <button
+                ></path>
+              </svg>
+            </button>
+            <button
                 type="button"
                 className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 focus:outline-none"
                 onClick={sendMessage}
-              >
-                <span className="font-bold">Envoyer</span>
-                <svg
+            >
+              <span className="font-bold">Envoyer</span>
+              <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                   className="h-6 w-6 ml-2 transform rotate-90"
-                >
-                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
-                </svg>
-              </button>
-            </div>
+              >
+                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </Fragment>
+
   );
 }

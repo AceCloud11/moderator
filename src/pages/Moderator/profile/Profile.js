@@ -83,6 +83,7 @@ export default function Profile() {
     })
     return (
       <div>
+          <ToastContainer />
         <div className="flex flex-col gap-4">
           <div className="flex justify-between">
             <label htmlFor="" className="text-lg font-bold">
@@ -152,7 +153,7 @@ export default function Profile() {
             className="p-2 rounded-md bg-blue-700 text-white"
             onClick={() => (editMode ? updateInfo() : "")}
           >
-            change password
+              Modifier les informations
           </button>
         </div>
       </div>
