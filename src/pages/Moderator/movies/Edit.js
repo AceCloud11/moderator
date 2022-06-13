@@ -137,20 +137,15 @@ class Edit extends Component {
       description: this.state.overview,
       quality: this.state.quality,
       lang: this.state.language,
-      allow_br: 0,
       allow_comments: 0,
-      allow_main: 0,
       is_approved: 0,
-      fixed: 0,
-      Symbol: this.state.symbol,
       tags: this.state.tags,
-      metatitle: "",
       type: "movie",
       bg: this.state.bg,
     };
 
     // console.log(data);
-
+    //
     // return null;
 
     await this.setState({
@@ -468,13 +463,13 @@ class Edit extends Component {
               value={this.state.origin}
               onChange={(e) => this.setState({ origin: e.target.value })}
             />
-            <input
-              type="text"
-              placeholder="Symbol"
-              className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-              value={this.state.symbol}
-              onChange={(e) => this.setState({ symbol: e.target.value })}
-            />
+            {/*<input*/}
+            {/*  type="text"*/}
+            {/*  placeholder="Symbol"*/}
+            {/*  className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"*/}
+            {/*  value={this.state.symbol}*/}
+            {/*  onChange={(e) => this.setState({ symbol: e.target.value })}*/}
+            {/*/>*/}
           </div>
           <div className="flex flex-col gap-4">
             <label htmlFor="" className="text-lg font-bold">

@@ -150,7 +150,7 @@ export default class Create extends Component {
       year: this.state.year,
       img: this.state.image,
       actors: this.state.actors,
-      categories: this.state.categories,
+      categories: this.state.cats,
       directors: this.state.directors,
       description: this.state.overview,
       quality: this.state.quality,
@@ -292,6 +292,7 @@ export default class Create extends Component {
           this.state.cats2.forEach((element) => {
             if (element.name === cat.name) {
               element.checked = true;
+              this.setState({ cats: [...this.state.cats.map(el => el.name), cat.name]});
             } else if (!element.checked) {
               element.checked = false;
             }
