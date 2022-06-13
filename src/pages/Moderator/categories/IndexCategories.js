@@ -15,6 +15,7 @@ import UserContext from "../../../Context/UserContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Error from "../../../components/Error";
+import {logoutUnAuthenticatedUsers} from "../../../helpers/helpers";
 
 export default function IndexCategories() {
   const data = useContext(UserContext);
@@ -46,6 +47,7 @@ export default function IndexCategories() {
       })
       .catch((err) => {
         console.error(err);
+        logoutUnAuthenticatedUsers(err.response.status);
       });
   };
 

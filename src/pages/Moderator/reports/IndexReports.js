@@ -20,6 +20,7 @@ import UserContext from "../../../Context/UserContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Pagination from "../../../components/Pagination";
+import {logoutUnAuthenticatedUsers} from "../../../helpers/helpers";
 
 export default function IndexReports() {
   const data = useContext(UserContext);
@@ -63,6 +64,7 @@ export default function IndexReports() {
       })
       .catch((err) => {
         console.error(err);
+        logoutUnAuthenticatedUsers(err.response.status);
       });
   };
 

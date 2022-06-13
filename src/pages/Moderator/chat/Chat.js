@@ -8,6 +8,7 @@ import { CgMoreO } from "react-icons/cg";
 import { BsTrash } from "react-icons/bs";
 import Picker from "emoji-picker-react";
 import Message from "./components/Message";
+import {logoutUnAuthenticatedUsers} from "../../../helpers/helpers";
 
 export default function Chat() {
   const [user, setUser] = useState();
@@ -78,6 +79,7 @@ export default function Chat() {
       })
       .catch((err) => {
         console.error(err);
+        logoutUnAuthenticatedUsers(err.response.status);
       });
   };
 

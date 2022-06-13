@@ -1,3 +1,5 @@
+import Cookies from "js-cookie";
+
 export function paginate(page) {
     let pg;
    if (page !== 1) {
@@ -31,4 +33,11 @@ export function getNameFromUrl(url) {
       ? name[0]
       : name[1];
   return name;
+}
+
+export function logoutUnAuthenticatedUsers(status){
+    if (status == 401){
+        Cookies.remove("token");
+        Cookies.remove("role");
+    }
 }

@@ -5,6 +5,7 @@ import UserContext from "../../../Context/UserContext";
 import Pagination from "../../../components/Pagination";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {logoutUnAuthenticatedUsers} from "../../../helpers/helpers";
 
 export default class Index extends Component {
   static contextType = UserContext;
@@ -51,6 +52,7 @@ export default class Index extends Component {
       })
       .catch((error) => {
         console.log(error);
+        logoutUnAuthenticatedUsers(error.response.status);
       });
   };
 

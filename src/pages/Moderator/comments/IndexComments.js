@@ -4,6 +4,7 @@ import Pagination from "../../../components/Pagination";
 import UserContext from "../../../Context/UserContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {logoutUnAuthenticatedUsers} from "../../../helpers/helpers";
 
 export default function IndexComments() {
   const [comments, setComments] = useState([]);
@@ -48,6 +49,7 @@ export default function IndexComments() {
       })
       .catch((err) => {
         console.error(err);
+        logoutUnAuthenticatedUsers(err.response.status);
       });
   };
 

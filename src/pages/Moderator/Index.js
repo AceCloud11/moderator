@@ -15,6 +15,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import UserContext from "../../Context/UserContext";
+import {logoutUnAuthenticatedUsers} from "../../helpers/helpers";
 export default function Index() {
   const { role, token } = useContext(UserContext);
 
@@ -39,6 +40,7 @@ export default function Index() {
       })
       .catch((error) => {
         console.log(error);
+        logoutUnAuthenticatedUsers(error.response.status);
       });
   };
 

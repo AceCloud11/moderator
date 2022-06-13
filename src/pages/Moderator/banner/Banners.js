@@ -19,6 +19,7 @@ import {
   Alert,
   AlertIcon,
 } from "@chakra-ui/react";
+import {logoutUnAuthenticatedUsers} from "../../../helpers/helpers";
 
 export default function Banners() {
   const { token } = useContext(UserContext);
@@ -44,6 +45,7 @@ export default function Banners() {
       })
       .catch((err) => {
         console.error(err);
+        logoutUnAuthenticatedUsers(err.response.status);
       });
   };
 

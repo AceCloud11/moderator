@@ -5,6 +5,7 @@ import Error from "../../../components/Error";
 import UserContext from '../../../Context/UserContext';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {logoutUnAuthenticatedUsers} from "../../../helpers/helpers";
 
 export default function Profile() {
     const { token } = React.useContext(UserContext);
@@ -31,7 +32,9 @@ export default function Profile() {
         setUsername(res.data.username);
         setEmail(res.data.email);
       })
-      .catch(console.error);
+      .catch(err => {
+          logoutUnAuthenticatedUsers(err.response.status);
+      });
     }
 
     const updateInfo = () => {

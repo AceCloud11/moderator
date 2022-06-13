@@ -17,6 +17,7 @@ import Pagination from "../../../components/Pagination";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Error from "../../../components/Error";
+import {logoutUnAuthenticatedUsers} from "../../../helpers/helpers";
 
 export default function IndexActor() {
   const data = useContext(UserContext);
@@ -54,6 +55,7 @@ export default function IndexActor() {
       })
       .catch((err) => {
         console.error(err);
+        logoutUnAuthenticatedUsers(err.response.status);
       });
   };
 
