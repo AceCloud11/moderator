@@ -26,6 +26,7 @@ export default class Create extends Component {
       categoriesM: [],
       categories: [],
       cats: [],
+      cats2: [],
       actorsM: [],
       directorsM: [],
       actors: [],
@@ -34,7 +35,7 @@ export default class Create extends Component {
       src: "",
       errors: [],
       token: "",
-      symbol: "",
+      bg: "",
     };
   }
 
@@ -51,7 +52,7 @@ export default class Create extends Component {
     })
       .then(async (res) => {
         await this.setState({
-          cats: res.data,
+          cats2: res.data,
         });
         // console.log(this.state.cats);
       })
@@ -124,6 +125,21 @@ export default class Create extends Component {
     }
   };
 
+  //Check Language
+  checkLang = () => {
+    let lang = '';
+    if (this.state.vf){
+      lang += "VF";
+    }
+    if (this.state.vf && this.state.vostfr){
+      lang += " / ";
+    }
+    if (this.state.vostfr){
+      lang += "VOSTFR";
+    }
+    return lang;
+  }
+
   // Create a new movie
   handleSubmit = async (e) => {
     e.preventDefault();
@@ -138,15 +154,10 @@ export default class Create extends Component {
       directors: this.state.directors,
       description: this.state.overview,
       quality: this.state.quality,
-      lang: this.state.language,
-      allow_br: 0,
+      lang: this.checkLang(),
       allow_comments: 0,
-      allow_main: 0,
       is_approved: 0,
-      fixed: 0,
-      Symbol: this.state.symbol,
       tags: this.state.tags,
-      metatitle: "",
       type: "movie",
       bg: this.state.bg,
     };
@@ -189,6 +200,8 @@ export default class Create extends Component {
           srcName: "",
           src: "",
           bg: "",
+          vf: false,
+          vostfr: false,
         });
 
         window.location.href = "/moderator/movies";
@@ -210,7 +223,29 @@ export default class Create extends Component {
     this.fetchSuggestionsById(this.state.page);
   };
 
+  clearState = () => {
+    this.setState({
+      duration: "",
+      year: "",
+      overview: "",
+      title: "",
+      image: "",
+      language: "",
+      origin: "",
+      quality: "",
+      tags: "",
+      categories: [],
+      cats: [],
+      actors: [],
+      directors: [],
+      srcName: "",
+      src: "",
+      bg: '',
+    });
+  }
+
   handleMovieChange = async (id) => {
+    this.clearState();
     let url =
       "https://api.themoviedb.org/3/movie/" +
       id +
@@ -254,7 +289,7 @@ export default class Create extends Component {
         }
 
         res.data.genres.map((cat) => {
-          this.state.cats.forEach((element) => {
+          this.state.cats2.forEach((element) => {
             if (element.name === cat.name) {
               element.checked = true;
             } else if (!element.checked) {
@@ -280,8 +315,7 @@ export default class Create extends Component {
         console.error(err);
       });
 
-    this.getCast(id);
-    this.getTrailer(id);
+    await this.getCast(id);
   };
 
   // get cast and crew
@@ -515,18 +549,45 @@ export default class Create extends Component {
             />
           </div>
 
-          <div className="flex gap-4">
-            <input
-              type="text"
-              placeholder="Langue"
-              className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-              value={this.state.language}
-              onChange={(e) => this.setState({ language: e.target.value })}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/*<input*/}
+            {/*  type="text"*/}
+            {/*  placeholder="Langue"*/}
+            {/*  className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"*/}
+            {/*  value={this.state.language}*/}
+            {/*  onChange={(e) => this.setState({ language: e.target.value })}*/}
+            {/*/>*/}
+            <div className="flex gap-4">
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">VF</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.vf}
+                    value={this.state.vf}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ vf: e.target.checked });
+                    }}
+                />
+              </label>
+
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">VOSTFR</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.vostfr}
+                    value={this.state.vostfr}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ vostfr: e.target.checked });
+                    }}
+                />
+              </label>
+            </div>
             <input
               type="text"
               placeholder="Qualité"
-              className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
+              className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300 flex-1"
               value={this.state.quality}
               onChange={(e) => this.setState({ quality: e.target.value })}
             />
@@ -693,13 +754,13 @@ export default class Create extends Component {
               value={this.state.origin}
               onChange={(e) => this.setState({ origin: e.target.value })}
             />
-            <input
-              type="text"
-              placeholder="Symbol"
-              className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-              value={this.state.symbol}
-              onChange={(e) => this.setState({ symbol: e.target.value })}
-            />
+            {/*<input*/}
+            {/*  type="text"*/}
+            {/*  placeholder="Symbol"*/}
+            {/*  className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"*/}
+            {/*  value={this.state.symbol}*/}
+            {/*  onChange={(e) => this.setState({ symbol: e.target.value })}*/}
+            {/*/>*/}
           </div>
           <div className="flex gap-4">
             <input
@@ -714,8 +775,8 @@ export default class Create extends Component {
           <fieldset className="border-2 border-gray-300 rounded-md p-4">
             <legend className="text-xl font-semibold">Catégories</legend>
             <article className="flex gap-4 flex-wrap">
-              {this.state.cats
-                ? this.state.cats.map((category) => (
+              {this.state.cats2
+                ? this.state.cats2.map((category) => (
                     <div
                       className="form-control  border border-gray-300 rounded-md"
                       key={category.id}
