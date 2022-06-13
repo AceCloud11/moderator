@@ -20,7 +20,6 @@ import Error from "../../../components/Error";
 
 export default function IndexActor() {
   const data = useContext(UserContext);
-  const toast = useToast();
 
   const [actors, setActors] = useState([]);
   const [actor, setActor] = useState("");
@@ -31,7 +30,6 @@ export default function IndexActor() {
   const [search, setSearch] = useState("");
   const [errors, setErrors] = useState([]);
 
-  const notify = (text) => toast.success(text);
 
   const fetchActors = async (page) => {
     if (page !== 1) {
@@ -59,12 +57,12 @@ export default function IndexActor() {
   };
 
   const searchActors = async (page) => {
-    if (page !== 1) {
-      window.location.search = "page=" + page;
-    }
-    let pg = new URLSearchParams(window.location.search).get("page") || 1;
+    // if (page !== 1) {
+    //   window.location.search = "page=" + page;
+    // }
+    // let pg = new URLSearchParams(window.location.search).get("page") || 1;
      await axios({
-       url: "moderator/actors?search=" + search + "&page=" + pg,
+       url: "moderator/actors?search=" + search + "&page=" + page,
        method: "GET",
        responseType: "json",
        headers: {
@@ -111,11 +109,12 @@ export default function IndexActor() {
         onCloseCreate();
         setErrors([]);
         setActorNew('');
-        fetchActors(1);
+        await fetchActors(1);
 
-        notify(res.data.message);
+        toast.success(res.data.success);
       })
       .catch((error) => {
+        // console.log(error)
         setErrors(old => [...old, error.response.data.message]);
       });
   };
@@ -141,9 +140,10 @@ export default function IndexActor() {
         setErrors([]);
         onCloseEdit();
         await fetchActors(1);
-        notify(res.data.message);
+        toast.success(res.data.success);
       })
       .catch((error) => {
+        // console.log(error)
         setErrors((old) => [...old, error.response.data.message]);
       });
   };
@@ -165,8 +165,8 @@ export default function IndexActor() {
       .then(async (res) => {
         //   console.log(res.data);
         await setActorId("");
-        await fetchActors();
-        notify(res.data.message);
+        await fetchActors(1);
+        toast.success(res.data.success);
       })
       .catch((error) => {
         console.log(error);

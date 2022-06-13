@@ -20,7 +20,6 @@ import Error from "../../../components/Error";
 
 export default function IndexActor() {
   const data = useContext(UserContext);
-  const toast = useToast();
 
   const [directors, setDirectors] = useState([]);
   const [director, setDirector] = useState("");
@@ -59,12 +58,12 @@ export default function IndexActor() {
   };
 
   const searchDirectors = async (page) => {
-    if (page !== 1) {
-      window.location.search = "page=" + page;
-    }
-    let pg = new URLSearchParams(window.location.search).get("page") || 1;
+    // if (page !== 1) {
+    //   window.location.search = "page=" + page;
+    // }
+    // let pg = new URLSearchParams(window.location.search).get("page") || 1;
     await axios({
-      url: "moderator/directors?search=" + search + "&page=" + pg,
+      url: "moderator/directors?search=" + search + "&page=" + page,
       method: "GET",
       responseType: "json",
       headers: {
@@ -110,14 +109,8 @@ export default function IndexActor() {
         await setDirectorNew("");
         onCloseCreate();
         setErrors([]);
-        fetchDirectors(1);
-        toast({
-          title: res.data.message,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-          position: "top-right",
-        });
+        await fetchDirectors(1);
+        toast.success(res.data.success);
       })
       .catch((error) => {
         setErrors((old) => [...old, error.response.data.message]);
@@ -145,13 +138,7 @@ export default function IndexActor() {
         setErrors([]);
         onCloseEdit();
         await fetchDirectors(1);
-        toast({
-          title: res.data.message,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-          position: "top-right",
-        });
+        toast.success(res.data.success);
       })
       .catch((error) => {
         setErrors((old) => [...old, error.response.data.message]);
@@ -176,13 +163,7 @@ export default function IndexActor() {
         //   console.log(res.data);
         await setDirectorId("");
         await fetchDirectors(1);
-        toast({
-          title: res.data.message,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-          position: "top-right",
-        });
+        toast.success(res.data.success);
       })
       .catch((error) => {
         toast({
