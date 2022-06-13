@@ -105,13 +105,16 @@ export default function IndexActor() {
       },
     })
       .then(async (res) => {
-        // console.log(res.data);
+        if (res.data.success){
         await setDirectorNew("");
         onCloseCreate();
         setErrors([]);
         await fetchDirectors(1);
         toast.success(res.data.success);
-      })
+      }else {
+      setErrors((old) => [...old, res.data.error]);
+    }
+  })
       .catch((error) => {
         setErrors((old) => [...old, error.response.data.message]);
       });
@@ -132,14 +135,17 @@ export default function IndexActor() {
       },
     })
       .then(async (res) => {
-        //   console.log(res.data);
+        if (res.data.success){
         await setDirector("");
         await setDirectorId("");
         setErrors([]);
         onCloseEdit();
         await fetchDirectors(1);
         toast.success(res.data.success);
-      })
+      }else {
+      setErrors((old) => [...old, res.data.error]);
+    }
+  })
       .catch((error) => {
         setErrors((old) => [...old, error.response.data.message]);
       });

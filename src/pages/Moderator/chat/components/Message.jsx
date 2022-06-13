@@ -35,16 +35,7 @@ export default function Message({ msg, fetch, isMine }){
             // className="flex gap-2 items-start flex-row-reverse justify-end"
             key={msg.id}
         >
-            {/*{*/}
-            {/*    options ? (*/}
-            {/*            <div className="p-2">*/}
-            {/*                <span className="cursor-pointer" onClick={() => deleteMessage(msg.id)}>*/}
-            {/*                  <i className="fa fa-trash text-2xl text-red-400"></i>*/}
-            {/*                </span>*/}
-            {/*            </div>*/}
-            {/*        )*/}
-            {/*        : null*/}
-            {/*}*/}
+
             <div className="flex flex-col-reverse">
                 <div className="flex flex-col space-y-2 text-xs  mx-2 order-2 items-start">
                     <div>
@@ -67,7 +58,7 @@ export default function Message({ msg, fetch, isMine }){
                                     )
                                     : null
                             }
-                            <span className="block text-xs text-slate-300">
+                            <span className={`block text-xs text-slate-300 ${isMine === 'true' ? '' : 'pt-2'}`}>
                                 {msg.username}
                             </span>
                             <span className="block">

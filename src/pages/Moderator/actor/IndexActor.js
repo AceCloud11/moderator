@@ -104,7 +104,7 @@ export default function IndexActor() {
       },
     })
       .then(async (res) => {
-        //   console.log(res.data);
+        if (res.data.success){
         await setActorNew("");
         onCloseCreate();
         setErrors([]);
@@ -112,7 +112,10 @@ export default function IndexActor() {
         await fetchActors(1);
 
         toast.success(res.data.success);
-      })
+      }else {
+      setErrors((old) => [...old, res.data.error]);
+    }
+  })
       .catch((error) => {
         // console.log(error)
         setErrors(old => [...old, error.response.data.message]);
@@ -134,13 +137,18 @@ export default function IndexActor() {
       },
     })
       .then(async (res) => {
-        //   console.log(res.data);
-        await setActor("");
-        await setActorId("");
-        setErrors([]);
-        onCloseEdit();
-        await fetchActors(1);
-        toast.success(res.data.success);
+
+        if (res.data.success) {
+          await setActor("");
+          await setActorId("");
+          setErrors([]);
+          onCloseEdit();
+          await fetchActors(1);
+          toast.success(res.data.success);
+        }else {
+          setErrors((old) => [...old, res.data.error]);
+        }
+
       })
       .catch((error) => {
         // console.log(error)
