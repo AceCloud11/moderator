@@ -15,7 +15,6 @@ export default function IndexComments() {
 
   const { token } = useContext(UserContext);
 
-  const notify = (text) => toast.success(text);
 
   const fetchComments = async (page) => {
     if (page !== 1) {
@@ -65,7 +64,7 @@ export default function IndexComments() {
     })
       .then((res) => {
         fetchComments(page);
-        notify(res.data.message);
+        toast.success(res.data.success);
       })
       .catch((err) => {
         console.error(err);
@@ -114,7 +113,7 @@ export default function IndexComments() {
     })
       .then((res) => {
         fetchComments(page);
-        notify(res.data.message);
+        toast.success(res.data.success);
       })
       .catch((err) => {
         console.error(err);
@@ -134,7 +133,7 @@ export default function IndexComments() {
     })
       .then((res) => {
         fetchComments(page);
-        notify(res.data.message);
+        toast.success(res.data.success);
       })
       .catch((err) => {
         console.error(err);
@@ -175,7 +174,7 @@ export default function IndexComments() {
   useEffect(async () => {
     // await setToken(token);
 
-    fetchComments(1);
+    await fetchComments(1);
 
     // console.log(comments);
     return () => {};

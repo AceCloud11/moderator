@@ -84,8 +84,8 @@ export default function Banners() {
       },
     })
       .then(async (res) => {
-        if (res.data.message) {
-          toast.success(res.data.message);
+        if (res.data.success) {
+          toast.success(res.data.success);
           setBanner("");
           setLink("");
           onCloseEdit();
@@ -242,7 +242,7 @@ export default function Banners() {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Source</ModalHeader>
+          <ModalHeader>Bannièr</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <div>

@@ -38,7 +38,6 @@ export default function IndexReports() {
   // const toast = useToast();
 
 
-  const notify = (text) => toast.success(text);
 
   const fetchReportsGeneral = async (page) => {
     if (page !== 1) {
@@ -145,7 +144,7 @@ export default function IndexReports() {
       await fetchReportsGeneral(1);
       await fetchReportsPosts(1);
       await fetchReportsComments(1);
-      notify(res.data.message);
+      toast.success(res.data.success);
       })
       .catch((err) => {
         console.error(err);
@@ -174,7 +173,7 @@ export default function IndexReports() {
       <TabList>
         <Tab>Rapports généraux</Tab>
         <Tab>Commentaires Rapports</Tab>
-        <Tab>Films Reportages</Tab>
+        <Tab>Rapports de Films </Tab>
       </TabList>
 
       <TabPanels>
@@ -356,7 +355,7 @@ export default function IndexReports() {
             <Modal isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
               <ModalContent>
-                <ModalHeader>Report Text</ModalHeader>
+                <ModalHeader>Rapport</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                   <p>{report}</p>
