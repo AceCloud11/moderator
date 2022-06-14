@@ -83,15 +83,20 @@ class Edit extends Component {
         res.data.directors.map((dir) => {
           dir.checked = true;
         });
-        res.data.categories.map((cat) => {
-          this.state.cats.forEach((element) => {
-            if (element.name == cat.name) {
-              element.checked = true;
-            } else if (!element.checked) {
-              element.checked = false;
-            }
-          });
+        let catsM = res.data.categories.map(el => el.id);
+        let changedCats = [];
+        this.state.cats.forEach(cat => {
+          if (catsM.includes(cat.id)){
+            cat.checked = true;
+          }else{
+            cat.checked = false;
+          }
+          changedCats.push(cat);
         });
+        this.setState({
+          cats: changedCats,
+        });
+        // console.log(res);
 
         // res.data.movieSources.map((src) => {
         //   src.slug = src.name + "|" + src.src;
