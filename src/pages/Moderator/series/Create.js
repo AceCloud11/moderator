@@ -251,7 +251,7 @@ export default class Create extends Component {
           year: res.data.first_air_date.split("-")[0],
           categories: this.state.cats
             .filter((cat) => cat.checked)
-            .map((cat) => cat.name),
+            .map((cat) => cat.id),
           tags: res.data.tagline,
           origin: res.data.origin_country[0],
           language: res.data.original_language,
@@ -305,45 +305,7 @@ export default class Create extends Component {
       });
   };
 
-  // get the movie trailer
-  getTrailer = async (id) => {
-    let url =
-      "https://api.themoviedb.org/3/tv/" +
-      id +
-      "/videos?api_key=e9d2c04b66ea46ff8dd8798d69c92134&&language=fr-FR";
 
-    // get the videos
-    await axios({
-      url: url,
-      method: "get",
-      responseType: "json",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then(async (res) => {
-        // console.log(res.data);
-        let trailers = res.data.results;
-        let trailer = '';
-        trailers.map((tr) => {
-          if (tr.site == "Youtube") {
-            if (trailer === "") {
-              trailer = "https://www.youtube.com/embed/" + trailers[0].key;
-            }
-          }else if (tr.site == 'Vimeo') {
-            trailer = "https://player.vimeo.com/video/" + trailers[0].key;
-          }
-        });
-        await this.setState({
-          trailer,
-        });
-        // console.log(this.state.directors);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
 
   createOptions = async () => {
     this.setState({
@@ -699,19 +661,19 @@ export default class Create extends Component {
                           value={category.name}
                           onChange={(e) => {
                             if (
-                              !this.state.categories.includes(category.name)
+                              !this.state.categories.includes(category.id)
                             ) {
                               this.setState({
                                 categories: [
                                   ...this.state.categories,
-                                  category.name,
+                                  category.id,
                                 ],
                               });
                               category.checked = true;
                             } else {
                               this.setState({
                                 categories: this.state.categories.filter(
-                                  (cat) => cat != category.name
+                                  (cat) => cat != category.id
                                 ),
                               });
                               category.checked = false;

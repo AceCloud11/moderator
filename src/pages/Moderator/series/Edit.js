@@ -26,6 +26,7 @@ class Edit extends Component {
       tags: "",
       categoriesM: [],
       categories: [],
+      cats: [],
       actorsM: [],
       actors: [],
       actor: "",
@@ -37,6 +38,27 @@ class Edit extends Component {
       token: "",
     };
   }
+
+  fetchCats = async () => {
+    axios({
+      url: "categories",
+      method: "GET",
+      responseType: "json",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        // Authorization: "Bearer " + this.state.token,
+      },
+    })
+        .then(async (res) => {
+          await this.setState({
+            cats: res.data,
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+  };
 
   handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,17 +76,14 @@ class Edit extends Component {
       quality: this.state.quality,
       lang: this.state.language,
       season: this.state.season,
-      allow_br: 0,
       allow_comments: 0,
-      allow_main: 0,
       is_approved: 0,
-      fixed: 0,
-      Symbol: "",
       tags: this.state.tags,
-      metatitle: "",
       type: "serie",
       latest_ep: this.state.latest_ep
     };
+    // console.log(data);
+    // return null;
 
     await this.setState({
       errors: [],
@@ -129,17 +148,27 @@ class Edit extends Component {
       },
     })
       .then(async (res) => {
-        console.log(res.data);
+        // console.log(res.data);
         res.data.actors.map((ac) => {
           ac.checked = true;
         });
         res.data.directors.map((ac) => {
           ac.checked = true;
         });
-        res.data.categories.map((ac) => {
-          ac.checked = true;
+        let catsM = res.data.categories.map(el => el.id);
+        let changedCats = [];
+        this.state.cats.forEach(cat => {
+          if (catsM.includes(cat.id)){
+            cat.checked = true;
+          }else{
+            cat.checked = false;
+          }
+          changedCats.push(cat);
         });
-
+        this.setState({
+          cats: changedCats,
+        });
+        // console.table(res.data.categories)
         await this.setState({
           title: res.data.title,
           duration: res.data.duration,
@@ -149,9 +178,9 @@ class Edit extends Component {
           actorsM: res.data.actors,
           actors: res.data.actors.map((actor) => actor.name),
           directors: res.data.directors.map((dir) => dir.name),
-          categories: res.data.categories.map((cat) => cat.name),
+          categories: res.data.categories.map((cat) => cat.id),
           directorsM: res.data.directors,
-          categoriesM: res.data.categories,
+          // categoriesM: res.data.categories,
           year: res.data.year,
           overview: res.data.description,
           image: res.data.img,
@@ -177,8 +206,9 @@ class Edit extends Component {
       {
         token: token,
       },
-      () => {
-        this.fetchSerie();
+      async () => {
+        await this.fetchSerie();
+        await this.fetchCats();
       }
     );
   }
@@ -425,8 +455,8 @@ class Edit extends Component {
           <fieldset className="border-2 border-gray-300 rounded-md p-4">
             <legend className="text-xl font-semibold">Categories</legend>
             <article className="flex gap-4 flex-wrap">
-              {this.state.categoriesM
-                ? this.state.categoriesM.map((category) => (
+              {this.state.cats
+                ? this.state.cats.map((category) => (
                     <div
                       className="form-control  border border-gray-300 rounded-md"
                       key={category.id}
@@ -436,7 +466,7 @@ class Edit extends Component {
                         <input
                           type="checkbox"
                           className="checkbox"
-                          checked
+                          checked={category.checked}
                           value={category.id}
                           onChange={(e) => {
                             if (!this.state.categories.includes(category.id)) {
@@ -446,12 +476,14 @@ class Edit extends Component {
                                   category.id,
                                 ],
                               });
+                              category.checked = true;
                             } else {
                               this.setState({
                                 categories: this.state.categories.filter(
                                   (cat) => cat != category.id
                                 ),
                               });
+                              category.checked = false;
                             }
                           }}
                         />

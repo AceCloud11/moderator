@@ -161,6 +161,8 @@ export default class Create extends Component {
       type: "movie",
       bg: this.state.bg,
     };
+/*    console.log(data);
+    return null;*/
 
     await this.setState({
       errors: [],
@@ -292,7 +294,7 @@ export default class Create extends Component {
           this.state.cats2.forEach((element) => {
             if (element.name === cat.name) {
               element.checked = true;
-              this.setState({ cats: [...this.state.cats.map(el => el.name), cat.name]});
+              this.setState({ cats: [...this.state.cats.map(el => el.id), element.id]});
             } else if (!element.checked) {
               element.checked = false;
             }
@@ -791,13 +793,13 @@ export default class Create extends Component {
                           value={category.id}
                           onChange={(e) => {
                             if (
-                              !this.state.categories.includes(category.name)
+                              !this.state.cats.includes(category.id)
                             ) {
                               this.setState(
                                 {
-                                  categories: [
-                                    ...this.state.categories,
-                                    category.name,
+                                  cats: [
+                                    ...this.state.cats,
+                                    category.id,
                                   ],
                                 }
                               );
@@ -805,8 +807,8 @@ export default class Create extends Component {
                             } else {
                               this.setState(
                                 {
-                                  categories: this.state.categories.filter(
-                                    (cat) => cat != category.name
+                                  cats: this.state.cats.filter(
+                                    (cat) => cat != category.id
                                   ),
                                 }
                               );

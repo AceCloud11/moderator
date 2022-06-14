@@ -118,6 +118,28 @@ export default class IndexMovies extends Component {
     }
   };
 
+  // disapprove movie
+  handleApprove = async (id, action) => {
+    await axios({
+      url: "/admin/posts/" + id + "/" + action,
+      method: "put",
+      responseType: "json",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Bearer " + this.state.token,
+      },
+    })
+        .then((res) => {
+          // console.log(res)
+          this.fetchMovies(1);
+          this.notify(res.data.success);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+  };
+
   deleteMovie = async (id) => {
     await axios({
       url: '/moderator/posts/' + id,
@@ -305,6 +327,28 @@ export default class IndexMovies extends Component {
                         >
                           Modifier
                         </a>
+
+                        {
+                            this.state.role === 'admin' ?
+                          movie.is_approved == 1  ? (
+                              <button
+                                  className="font-medium text-orange-700 dark:text-blue-500 hover:underline"
+                                  onClick={() => this.handleApprove(movie.id, "disapprove")}
+                              >
+                                Désapprouver
+                              </button>
+                          )
+                              :
+                              (
+                                  <button
+                                      className="font-medium text-orange-700 dark:text-blue-500 hover:underline"
+                                      onClick={() => this.handleApprove(movie.id, "approve")}
+                                  >
+                                    Approuver
+                                  </button>
+                              )
+                                : null
+                        }
 
                         <button
                           className="font-medium text-purple-600 dark:text-blue-500 hover:underline"

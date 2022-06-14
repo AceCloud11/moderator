@@ -107,7 +107,7 @@ class Edit extends Component {
           actorsM: res.data.actors,
           actors: res.data.actors.map((actor) => actor.name),
           directors: res.data.directors.map((dir) => dir.name),
-          categories: res.data.categories.map((cat) => cat.name),
+          categories: res.data.categories.map((cat) => cat.id),
           directorsM: res.data.directors,
           categoriesM: res.data.categories,
           year: res.data.year,
@@ -502,13 +502,13 @@ class Edit extends Component {
                           value={category.name}
                           onChange={(e) => {
                             if (
-                              !this.state.categories.includes(category.name)
+                              !this.state.categories.includes(category.id)
                             ) {
                               this.setState(
                                 {
                                   categories: [
                                     ...this.state.categories,
-                                    category.name,
+                                    category.id,
                                   ],
                                 }
                               );
@@ -517,7 +517,7 @@ class Edit extends Component {
                               this.setState(
                                 {
                                   categories: this.state.categories.filter(
-                                    (cat) => cat != category.name
+                                    (cat) => cat != category.id
                                   ),
                                 }
                               );
