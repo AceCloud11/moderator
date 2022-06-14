@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
 import IndexCategories from "./categories/IndexCategories";
+import TestTable from "./categories/TestTable";
 import IndexComments from "./comments/IndexComments";
 import Create from "./movies/Create";
 import Edit from "./movies/Edit";
@@ -343,12 +344,12 @@ export default function Dashboard() {
               <IndexCategories />
             </Route>
       
-            {/* Categories Routes */}
+            {/* actors Routes */}
             <Route path="/moderator/actors">
               <IndexActor />
             </Route>
 
-            {/* Categories Routes */}
+            {/* directors Routes */}
             <Route path="/moderator/directors">
               <IndexDirector />
             </Route>
