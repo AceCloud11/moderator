@@ -203,6 +203,10 @@ export default function IndexCategories() {
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
+                ID
+              </th>
+
+              <th scope="col" className="px-6 py-3">
                 Nom du category
               </th>
 
@@ -221,6 +225,13 @@ export default function IndexCategories() {
                     <th
                       scope="row"
                       className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                    >
+                      {cat.id}
+                    </th>
+
+                    <th
+                        scope="row"
+                        className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
                     >
                       {cat.name}
                     </th>
