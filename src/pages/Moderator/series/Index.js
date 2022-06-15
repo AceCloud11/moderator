@@ -159,6 +159,28 @@ export default class Index extends Component {
       });
   };
 
+  // disapprove movie
+  handleApprove = async (id, action) => {
+    await axios({
+      url: "/admin/posts/" + id + "/" + action,
+      method: "put",
+      responseType: "json",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Bearer " + this.state.token,
+      },
+    })
+        .then((res) => {
+          // console.log(res)
+          this.fetchSeries(1);
+          this.notify(res.data.success);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+  };
+
   componentDidMount() {
     const { token, role } = this.context;
     this.setState(
