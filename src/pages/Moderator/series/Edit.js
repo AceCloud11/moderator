@@ -36,6 +36,9 @@ class Edit extends Component {
       director: "",
       errors: [],
       token: "",
+      first: false,
+      allowComments: false,
+      approved: false,
     };
   }
 
@@ -76,8 +79,9 @@ class Edit extends Component {
       quality: this.state.quality,
       lang: this.state.language,
       season: this.state.season,
-      allow_comments: 0,
-      is_approved: 0,
+      allow_comments: this.state.allowComments ? 1 : 0,
+      is_first: this.state.first ? 1 : 0,
+      is_approved: this.state.approved,
       tags: this.state.tags,
       type: "serie",
       latest_ep: this.state.latest_ep
@@ -122,6 +126,9 @@ class Edit extends Component {
           sources: [],
           source: "",
           latest_ep : '',
+          first: false,
+          allowComments: false,
+          approved: false,
         });
 
         window.location.href = "/moderator/series";
@@ -187,6 +194,9 @@ class Edit extends Component {
           tags: res.data.tags,
           season: res.data.season,
           latest_ep: res.data.latest_ep,
+          allowComments: res.data.allow_comments,
+          first: res.data.is_first,
+          approved: res.data.is_approved
         });
         // console.log(this.state.categories);
       })
@@ -228,6 +238,40 @@ class Edit extends Component {
               onChange={(e) => this.setState({ title: e.target.value })}
             />
           </div>
+
+          <fieldset className="border-2 border-gray-300 rounded-md p-4">
+            <legend className="text-xl font-semibold">Actions</legend>
+
+            <article className="flex flex-wrap gap-4">
+              {/*  is first */}
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">Afficher En Premier</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.first}
+                    value={this.state.first}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ first: e.target.checked });
+                    }}
+                />
+              </label>
+
+              {/*  approved */}
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">Autoriser les commentaires</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.allowComments}
+                    value={this.state.allowComments}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ allowComments: e.target.checked });
+                    }}
+                />
+              </label>
+            </article>
+          </fieldset>
 
           <div className="flex gap-4">
             <input

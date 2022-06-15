@@ -36,6 +36,10 @@ export default class Create extends Component {
       errors: [],
       token: "",
       bg: "",
+      allowComments: false,
+      vf: false,
+      first: false,
+      vostfr: false,
     };
   }
 
@@ -155,14 +159,15 @@ export default class Create extends Component {
       description: this.state.overview,
       quality: this.state.quality,
       lang: this.checkLang(),
-      allow_comments: 0,
       is_approved: 0,
       tags: this.state.tags,
       type: "movie",
       bg: this.state.bg,
+      allow_comments: this.state.allowComments ? 1 : 0,
+      is_first: this.state.first ? 1 : 0,
     };
-/*    console.log(data);
-    return null;*/
+    // console.log(data);
+    // return null;
 
     await this.setState({
       errors: [],
@@ -204,6 +209,8 @@ export default class Create extends Component {
           bg: "",
           vf: false,
           vostfr: false,
+          first: false,
+          allowComments: false,
         });
 
         window.location.href = "/moderator/movies";
@@ -243,6 +250,10 @@ export default class Create extends Component {
       srcName: "",
       src: "",
       bg: '',
+      vf: false,
+      vostfr: false,
+      allowComments: false,
+      first: false,
     });
   }
 
@@ -542,25 +553,49 @@ export default class Create extends Component {
             ) : null}
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex gap-4 flex-wrap">
             <input
               type="text"
               placeholder="Titre du film"
-              className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
+              className="flex-grow p-2 rounded-md border-2 focus:outline-none border-gray-300"
               value={this.state.title}
               onChange={(e) => this.setState({ title: e.target.value })}
             />
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/*<input*/}
-            {/*  type="text"*/}
-            {/*  placeholder="Langue"*/}
-            {/*  className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"*/}
-            {/*  value={this.state.language}*/}
-            {/*  onChange={(e) => this.setState({ language: e.target.value })}*/}
-            {/*/>*/}
-            <div className="flex gap-4">
+          </div>
+          <fieldset className="border-2 border-gray-300 rounded-md p-4">
+            <legend className="text-xl font-semibold">Actions</legend>
+
+            <article className="flex flex-wrap gap-4">
+              {/*  is first */}
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">Afficher En Premier</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.first}
+                    value={this.state.first}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ first: e.target.checked });
+                    }}
+                />
+              </label>
+
+              {/*  allowComments */}
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">Autoriser les commentaires</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.allowComments}
+                    value={this.state.allowComments}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ allowComments: e.target.checked });
+                    }}
+                />
+              </label>
+
+            {/*  vf */}
               <label className="label cursor-pointer space-x-2">
                 <span className="label-text">VF</span>
                 <input
@@ -574,6 +609,8 @@ export default class Create extends Component {
                 />
               </label>
 
+
+            {/*  Vostfr */}
               <label className="label cursor-pointer space-x-2">
                 <span className="label-text">VOSTFR</span>
                 <input
@@ -586,7 +623,22 @@ export default class Create extends Component {
                     }}
                 />
               </label>
-            </div>
+            </article>
+          </fieldset>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/*<input*/}
+            {/*  type="text"*/}
+            {/*  placeholder="Langue"*/}
+            {/*  className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"*/}
+            {/*  value={this.state.language}*/}
+            {/*  onChange={(e) => this.setState({ language: e.target.value })}*/}
+            {/*/>*/}
+            {/*<div className="flex gap-4">*/}
+            {/*  */}
+
+            {/*  */}
+            {/*</div>*/}
             <input
               type="text"
               placeholder="Qualité"

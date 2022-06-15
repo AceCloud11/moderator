@@ -37,6 +37,10 @@ class Edit extends Component {
       errors: [],
       token: "",
       bg: "",
+      first: false,
+      allowComments: false,
+      vf: false,
+      vostfr:false
     };
   }
 
@@ -96,7 +100,7 @@ class Edit extends Component {
         this.setState({
           cats: changedCats,
         });
-        // console.log(res);
+        console.log(res);
 
         // res.data.movieSources.map((src) => {
         //   src.slug = src.name + "|" + src.src;
@@ -119,7 +123,11 @@ class Edit extends Component {
           overview: res.data.description,
           image: res.data.img,
           tags: res.data.tags,
-          bg: res.data.bg
+          bg: res.data.bg,
+          first: res.data.is_first,
+          allowComments: res.data.allow_comments,
+          vf: res.data.lang == "VF" || res.data.lang == "VF / VOSTFR" ? true : false,
+          vostfr: res.data.lang == "VOSTFR" || res.data.lang == "VF / VOSTFR" ? true : false,
         });
         // console.log(this.state.id);
       })
@@ -127,6 +135,21 @@ class Edit extends Component {
         console.error(err);
       });
   };
+
+  //Check Language
+  checkLang = () => {
+    let lang = '';
+    if (this.state.vf){
+      lang += "VF";
+    }
+    if (this.state.vf && this.state.vostfr){
+      lang += " / ";
+    }
+    if (this.state.vostfr){
+      lang += "VOSTFR";
+    }
+    return lang;
+  }
 
   handleSubmit = async (e) => {
     e.preventDefault();
@@ -141,12 +164,13 @@ class Edit extends Component {
       directors: this.state.directors,
       description: this.state.overview,
       quality: this.state.quality,
-      lang: this.state.language,
-      allow_comments: 0,
-      is_approved: 0,
+      lang: this.checkLang(),
+      allow_comments: this.state.allowComments,
       tags: this.state.tags,
       type: "movie",
       bg: this.state.bg,
+      is_first: this.state.first ? 1 : 0,
+      is_approved: 0,
     };
 
     // console.log(data);
@@ -190,6 +214,10 @@ class Edit extends Component {
           // sources: [],
           srcName: "",
           src: "",
+          first: false,
+          allowComments: false,
+          vf: false,
+          vostfr: false,
         });
 
         window.location.href = "/moderator/movies";
@@ -220,19 +248,81 @@ class Edit extends Component {
     return (
       <div>
         <h1 className="text-2xl font-bold my-12 text-center">
-          Ajouter un nouveau film
+          Modifier
         </h1>
 
         <form action="" className="space-y-4">
-          <div className="flex gap-4">
+          <div className="flex gap-4 flex-wrap">
             <input
               type="text"
               placeholder="Movie Title"
-              className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
+              className="flex-grow p-2 rounded-md border-2 focus:outline-none border-gray-300"
               value={this.state.title}
               onChange={(e) => this.setState({ title: e.target.value })}
             />
           </div>
+          <fieldset className="border-2 border-gray-300 rounded-md p-4">
+            <legend className="text-xl font-semibold">Actions</legend>
+
+            <article className="flex flex-wrap gap-4">
+              {/*  is first */}
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">Afficher En Premier</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.first}
+                    value={this.state.first}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ first: e.target.checked });
+                    }}
+                />
+              </label>
+
+              {/*  approved */}
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">Autoriser les commentaires</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.allowComments}
+                    value={this.state.allowComments}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ allowComments: e.target.checked });
+                    }}
+                />
+              </label>
+
+              {/*  vf */}
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">VF</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.vf}
+                    value={this.state.vf}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ vf: e.target.checked });
+                    }}
+                />
+              </label>
+
+
+              {/*  Vostfr */}
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">VOSTFR</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.vostfr}
+                    value={this.state.vostfr}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ vostfr: e.target.checked });
+                    }}
+                />
+              </label>
+            </article>
+          </fieldset>
 
           <div className="flex gap-4">
             <input

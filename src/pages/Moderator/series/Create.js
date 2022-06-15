@@ -31,14 +31,13 @@ export default class Create extends Component {
       directorsM: [],
       directors: [],
       director: "",
-      sources: [],
-      trailer: "",
-      source: "",
       errors: [],
       token: "",
       seasonNumber: 0,
       options: [],
       season: "",
+      first: false,
+      allowComments: false,
     };
   }
 
@@ -120,16 +119,11 @@ export default class Create extends Component {
       quality: this.state.quality,
       lang: this.state.language,
       season: parseInt(this.state.season),
-      allow_br: 0,
-      allow_comments: 0,
-      allow_main: 0,
+      allow_comments: this.state.allowComments ? 1 : 0,
+      is_first: this.state.start ? 1 : 0,
       is_approved: 0,
-      fixed: 0,
-      Symbol: "",
       tags: this.state.tags,
-      metatitle: "",
       type: "serie",
-      trailer: this.state.trailer
     };
 
     // console.log(data);
@@ -169,8 +163,8 @@ export default class Create extends Component {
           directorsM: [],
           actors: [],
           directors: [],
-          sources: [],
-          source: "",
+          first: false,
+          allowComments: false,
         });
 
         window.location.href = "/moderator/series";
@@ -489,6 +483,39 @@ export default class Create extends Component {
                 : null}
             </select>
           </div>
+          <fieldset className="border-2 border-gray-300 rounded-md p-4">
+            <legend className="text-xl font-semibold">Actions</legend>
+
+            <article className="flex flex-wrap gap-4">
+              {/*  is first */}
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">Afficher En Premier</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.first}
+                    value={this.state.first}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ first: e.target.checked });
+                    }}
+                />
+              </label>
+
+              {/*  approved */}
+              <label className="label cursor-pointer space-x-2">
+                <span className="label-text">Autoriser les commentaires</span>
+                <input
+                    type="checkbox"
+                    checked={this.state.allowComments}
+                    value={this.state.allowComments}
+                    className="checkbox"
+                    onChange={e => {
+                      this.setState({ allowComments: e.target.checked });
+                    }}
+                />
+              </label>
+            </article>
+          </fieldset>
 
           <div className="flex gap-4">
             <input

@@ -20,6 +20,8 @@ import {
 } from "@chakra-ui/react";
 import Hosts from "../../../components/Hosts";
 import { getNameFromUrl } from "../../../helpers/helpers";
+import Source from "./components/Source";
+import log from "tailwindcss/lib/util/log";
 
 export default function Sources() {
   const [sources, setSources] = useState([]);
@@ -30,19 +32,17 @@ export default function Sources() {
   const [srcId, setSrcId] = useState(null);
   const [hosts, setHosts] = useState([]);
   const [vf, setVf] = useState(true);
+  const [canAdd, setCanAdd] = useState(false);
 
   // change demain name
-  const [demain, setDemain] = useState('');
-  const [demainName, setDemainName] = useState('');
+  const [lecteurs, setLecteurs] = useState([]);
+
 
   const { token } = useContext(UserContext);
 
   const { id } = useParams();
 
-  const changeDemainName = () => {
-    console.log(demain);
-    console.log(demainName);
-  }
+
 
   const fetchSources = async () => {
     await axios({
@@ -66,36 +66,12 @@ export default function Sources() {
 
 
   const addSources = async () => {
-    await setErrors([]);
-    if (src === "" || name === "") {
-      await setErrors((old) => [...old, "Tout les champs sont obligatoire"]);
-      return;
-    }
-
-    // check if the link provided is valid
-    if (!src.includes("http://") && !src.includes("https://")) {
-      await setErrors((old) => [...old, "veuillez entrer un lien valide"]);
-      // setSrc("");
-      return;
-    }
-
-    // extract name from the url
-    let n = src.split("//")[1].split("/")[0];
-
-    if (!hosts.includes(n)) {
-      await setErrors((old) => [...old, `le domain ${n} n'est pas autorisée`]);
-      return;
-    }
-
-
     await axios({
       url: "/moderator/movie-sources/" + id,
       method: "post",
       responseType: "json",
       data: {
-        name,
-        vf,
-        src,
+        sources: lecteurs
       },
       headers: {
         "Content-Type": "application/json",
@@ -170,10 +146,6 @@ export default function Sources() {
       url: "/moderator/movie-sources/" + srcid,
       method: "delete",
       responseType: "json",
-      data: {
-        name,
-        src,
-      },
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -206,7 +178,7 @@ export default function Sources() {
     })
       .then(async (res) => {
         // await setDashbaord(res.data);
-        setHosts(res.data.map(el => el.domain_name));
+        setHosts(res.data);
 
         // console.log(res.data);
       })
@@ -226,11 +198,7 @@ export default function Sources() {
     onOpen: onOpenEdit,
     onClose: onCloseEdit,
   } = useDisclosure();
-  const {
-    isOpen: isOpenChangeDemainName,
-    onOpen: onOpenChangeDemainName,
-    onClose: onCloseChangeDemainName,
-  } = useDisclosure();
+
 
   useEffect(() => {
     fetchSources();
@@ -255,12 +223,7 @@ export default function Sources() {
           >
             Ajouter un lien
           </button>
-          {/* <button
-            className="block px-4 py-2 rounded-md bg-indigo-600 text-white"
-            onClick={onOpenChangeDemainName}
-          >
-            Change nom de demain
-          </button> */}
+
         </div>
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -343,12 +306,14 @@ export default function Sources() {
 
       {/* Create Episode Modal */}
       <Modal
+
         isOpen={isOpenCreate}
         onClose={async () => {
           onCloseCreate();
           await setSrc("");
           await setName("");
           await setVf(true);
+          setLecteurs([])
         }}
       >
         <ModalOverlay />
@@ -357,58 +322,40 @@ export default function Sources() {
           <ModalCloseButton />
           <ModalBody>
             <div>
-              <form action="" className="space-y-4">
-                <div className="flex gap-4 flex-wrap">
-                  <input
-                    type="text"
-                    placeholder="Nom du lecteur"
-                    className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
+            <Source hosts={hosts} submit={(src) => {
+              setLecteurs(old => [...old, src]);
+              // console.log(src)
+            } }/>
 
-                  {/* vf */}
-                  <div className="flex gap-4">
-                    <label className="label cursor-pointer space-x-2">
-                      <span className="label-text">VF</span>
-                      <input
-                        type="checkbox"
-                        checked={vf}
-                        value={vf}
-                        onChange={(e) => {
-                          setVf(!vf);
-                        }}
-                        className="checkbox"
-                      />
-                    </label>
-                  </div>
 
-                  <input
-                    type="text"
-                    placeholder="lien"
-                    className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                    value={src}
-                    onChange={(e) => setSrc(e.target.value)}
-                  />
-                  {/* <Hosts hosts={hosts} /> */}
-                </div>
+            {
+              lecteurs.length ?
+                  (
+                      <div className=" w-full overflow-x-scroll no-scroll">
+                      <table className="w-full">
+                        <thead className="bg-slate-300 border border-gray-300">
+                        <th className="p-2">Nom</th>
+                        <th className="p-2">Vesrion</th>
+                        <th className="p-2">Lien</th>
+                        </thead>
+                        <tbody>
+                        {
+                          lecteurs.map(lecteur => (
+                              <tr className='border border-gray-300'>
+                                <td className='border border-gray-300 p-2'>{lecteur.name}</td>
+                                <td className='border border-gray-300 p-2'>{lecteur.vf ? 'VF' : "VOSTFR"}</td>
+                                <td className='border border-gray-300 p-2'>{lecteur.src}</td>
+                              </tr>
+                          ))
+                        }
+                        </tbody>
+                      </table>
+                      </div>
+                  ) : null
+            }
 
-                <div className="space-y-4 my-4">
-                  {errors.length
-                    ? errors.map((error) => (
-                        <Alert
-                          status="error"
-                          className="rounded-md"
-                          key={error}
-                        >
-                          <AlertIcon />
-                          {error}
-                        </Alert>
-                      ))
-                    : null}
-                </div>
-              </form>
             </div>
+
           </ModalBody>
 
           <ModalFooter>
@@ -421,6 +368,7 @@ export default function Sources() {
                 await setName("");
                 setVf(true);
                 setErrors([]);
+                setLecteurs([])
               }}
             >
               Close

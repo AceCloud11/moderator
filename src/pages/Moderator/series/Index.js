@@ -311,6 +311,28 @@ export default class Index extends Component {
                           Éditer
                         </a>
 
+                        {
+                          this.state.role === 'admin' ?
+                              serie.is_approved == 1  ? (
+                                      <button
+                                          className="font-medium text-orange-700 dark:text-blue-500 hover:underline"
+                                          onClick={() => this.handleApprove(serie.id, "disapprove")}
+                                      >
+                                        Désapprouver
+                                      </button>
+                                  )
+                                  :
+                                  (
+                                      <button
+                                          className="font-medium text-orange-700 dark:text-blue-500 hover:underline"
+                                          onClick={() => this.handleApprove(serie.id, "approve")}
+                                      >
+                                        Approuver
+                                      </button>
+                                  )
+                              : null
+                        }
+
                         <button
                           className="font-medium text-purple-600 dark:text-blue-500 hover:underline"
                           onClick={() => this.addToSlider(serie.id)}
