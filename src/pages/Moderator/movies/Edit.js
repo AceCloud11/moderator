@@ -40,7 +40,8 @@ class Edit extends Component {
       first: false,
       allowComments: false,
       vf: false,
-      vostfr:false
+      vostfr:false,
+      approved: false,
     };
   }
 
@@ -128,6 +129,7 @@ class Edit extends Component {
           allowComments: res.data.allow_comments,
           vf: res.data.lang == "VF" || res.data.lang == "VF / VOSTFR" ? true : false,
           vostfr: res.data.lang == "VOSTFR" || res.data.lang == "VF / VOSTFR" ? true : false,
+          approved: res.data.is_approved
         });
         // console.log(this.state.id);
       })
@@ -170,7 +172,7 @@ class Edit extends Component {
       type: "movie",
       bg: this.state.bg,
       is_first: this.state.first ? 1 : 0,
-      is_approved: 0,
+      is_approved: this.state.approved,
     };
 
     // console.log(data);
