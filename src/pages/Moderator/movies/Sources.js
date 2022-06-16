@@ -66,32 +66,6 @@ export default function Sources() {
   };
 
 
-  // const addSources = async (arr) => {
-  //   await axios({
-  //     url: "/moderator/movie-sources/" + id,
-  //     method: "post",
-  //     responseType: "json",
-  //     data: {
-  //       sources: arr
-  //     },
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Accept: "application/json",
-  //       Authorization: "Bearer " + token,
-  //     },
-  //   })
-  //     .then(async (response) => {
-  //       toast.success(response.data.success);
-  //       setSrc("");
-  //       setErrors([]);
-  //       setName("");
-  //       onCloseCreate();
-  //       await fetchSources();
-  //     })
-  //     .catch((error) => {
-  //       toast.error(error.response.data.message);
-  //     });
-  // };
 
 
 
@@ -124,11 +98,16 @@ export default function Sources() {
       setErrors(arr[0]);
       return;
     }else{
-      await addSources(arr[1], token, id);
-      onCloseCreate();
-      setVf(false);
-      setSrc('');
-      await fetchSources();
+       addSources(arr[1], token, id).then(res => {
+         if (Object.keys(res).length === 0){
+            onCloseCreate();
+            setVf(false);
+            setSrc('');
+            fetchSources();
+         }else{
+           setErrors(res);
+         }
+       });
     }
   }
 
@@ -149,6 +128,28 @@ const handleDelete = async (id) => {
     setName('');
     onCloseEdit();
     await fetchSources();
+  }
+
+  const deleteAll = async () => {
+    await axios({
+      url: "/moderator/movie-sources/movie/" + id,
+      method: "delete",
+      responseType: "json",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    })
+        .then(async (res) => {
+          // console.log(res);
+          toast.success(res.data.success);
+          await fetchSources();
+        })
+        .catch((error) => {
+          // err.push(error.response.data.message)
+          console.log(error)
+        });
   }
 
   const {
@@ -176,16 +177,24 @@ const handleDelete = async (id) => {
       <ToastContainer />
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <div className="p-4 flex flex-wrap justify-between items-center gap-4">
-          <h1 className="text-center text-xl font-bold hidden md:block">
+          <h1 className="text-center text-xl font-bold">
             {title}
           </h1>
+          <div className="flex flex-wrap gap-2">
+          <button
+              className="block px-4 py-2 rounded-md bg-red-600 text-white"
+              onClick={deleteAll}
+          >
+            Supprimer tout
+          </button>
 
           <button
             className="block px-4 py-2 rounded-md bg-indigo-600 text-white"
             onClick={onOpenCreate}
           >
-            Ajouter un lien
+            Ajouter
           </button>
+          </div>
 
         </div>
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">

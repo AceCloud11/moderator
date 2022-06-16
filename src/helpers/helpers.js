@@ -77,6 +77,7 @@ const generateSource = (domain, src, hosts, vf) => {
 }
 
 export  const addSources = async (arr, token, id) => {
+    let err = [];
     await axios({
         url: "/moderator/movie-sources/" + id,
         method: "post",
@@ -94,8 +95,10 @@ export  const addSources = async (arr, token, id) => {
             toast.success(response.data.success);
         })
         .catch((error) => {
-            toast.error(error.response.data.message);
+            err.push(error.response.data.message)
+
         });
+    return err;
 };
 
 

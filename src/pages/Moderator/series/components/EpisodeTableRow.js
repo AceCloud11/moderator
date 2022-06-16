@@ -16,6 +16,7 @@ import {useParams} from "react-router-dom";
 import UserContext from "../../../../Context/UserContext";
 import Error from "../../../../components/Error";
 import log from "tailwindcss/lib/util/log";
+import {toast} from "react-toastify";
 
 export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token, handleAdd, clearErrors }){
 
@@ -117,7 +118,27 @@ export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token, h
             });
     }
 
-
+    const deleteAll = async (id) => {
+        await axios({
+            url: "/moderator/movie-sources/episode/" + id,
+            method: "delete",
+            responseType: "json",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                Authorization: "Bearer " + token,
+            },
+        })
+            .then(async (res) => {
+                // console.log(res);
+                toast.success(res.data.success);
+                await fetch();
+            })
+            .catch((error) => {
+                // err.push(error.response.data.message)
+                console.log(error)
+            });
+    }
 
 
 
@@ -151,14 +172,22 @@ export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token, h
             >
               Ajouter un Lecteurs
             </button>
+
+              <button
+                  className="font-medium text-red-600 dark:text-blue-500 hover:underline mr-3"
+                  onClick={() => deleteAll(ep.id)}
+              >
+                  Supprimer toutes les lecteurs
+              </button>
+
             <button
-              className="font-medium text-red-600 dark:text-blue-500 hover:underline mr-3"
+              className="font-medium text-red-600 dark:text-red-700 hover:underline mr-3"
               onClick={(e) => {
                 e.preventDefault();
                 deleteEpisode(ep.id);
               }}
             >
-              Supprimer
+              Supprimer Episode
             </button>
           </td>
         </tr>
