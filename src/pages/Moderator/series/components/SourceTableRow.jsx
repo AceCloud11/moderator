@@ -10,6 +10,7 @@ import {
     ModalOverlay, useDisclosure
 } from "@chakra-ui/react";
 import axios from "axios";
+import {deleteSources, updateSources} from "../../../../helpers/helpers";
 
 export default function SourceTableRow( { source, token, hosts, fetch, makeToast }){
 
@@ -25,84 +26,24 @@ export default function SourceTableRow( { source, token, hosts, fetch, makeToast
         onClose: onCloseEditSource,
     } = useDisclosure();
 
-    //update source
-    const updateEpisodeSource = async () => {
-        if (src.includes("http://") || src.includes("https://")) {
-            let n = src.split("//")[1].split("/")[0];
-            if (!hosts.includes(n)) {
-                await setErrors((old) => [...old, `la source ${n} n'est pas autorisée`]);
-                return;
-            }
-            const data = {
-                vf: vf,
-                src: src,
-                name: name
-            };
-            setErrors([]);
-            await axios({
-                url: "/moderator/movie-sources/" + sourceId,
-                method: "put",
-                data,
-                responseType: "json",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-            })
-                .then(async (res) => {
-                    // console.log(res.data);
-                    if (res.data.error) {
-                        await setErrors((old) => [...old, res.data.error]);
-                    } else if (res.data.message) {
-                        await setErrors((old) => [...old, res.data.message]);
-                    } else {
-                        setErrors([]);
-                        setSrc("");
-                        setName('');
-                        setSourceId(null);
-                        setVf(false);
-                        makeToast('success', res.data.success);
-                        onCloseEditSource();
-                        fetch();
 
-                    }
-                })
-                .catch(async (err) => {
-                    // console.log(err.response);
-                    await setErrors((old) => [...old, err.response.data.message]);
-                });
-        } else {
-            await setErrors((old) => [...old, "veuillez entrer un lien valide"]);
-            // setSrc("");
-            return;
-        }
-
-        // extract name from the url
+    const handleDelete = async (id) => {
+        await deleteSources(id, token);
+        await fetch();
     }
 
-    //delete source
-    const deleteEpisodeSource = async (id) => {
-            await axios({
-                url: "/moderator/movie-sources/" + id,
-                method: "delete",
-                responseType: "json",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-            })
-                .then(async function (res) {
-                    setSourceId(null);
-                    makeToast('success', res.data.success);
-                    fetch()
-                })
-                .catch(async (err) => {
-                    // console.log(err.response);
-                    await setErrors((old) => [...old, err.response.data.message]);
-                });
-
+    const handleEdit = async () => {
+        let err = await updateSources(name, src,sourceId, token, hosts, vf);
+        if (err.length){
+            setErrors(err);
+            return ;
+        }
+        setSrc('');
+        setVf(false);
+        setSourceId('');
+        setName('');
+        onCloseEditSource();
+        await fetch();
     }
     return (
         <Fragment>
@@ -148,7 +89,7 @@ export default function SourceTableRow( { source, token, hosts, fetch, makeToast
                     className="font-medium text-red-600 dark:text-blue-500 hover:underline mr-3"
                     onClick={(e) => {
                         e.preventDefault();
-                        deleteEpisodeSource(source.id);
+                        handleDelete(source.id);
                     }}
                 >
                     Effacer
@@ -240,7 +181,7 @@ export default function SourceTableRow( { source, token, hosts, fetch, makeToast
                         >
                             Close
                         </Button>
-                        <Button colorScheme="linkedin" onClick={updateEpisodeSource}>
+                        <Button colorScheme="linkedin" onClick={handleEdit}>
                             Modifier
                         </Button>
                     </ModalFooter>

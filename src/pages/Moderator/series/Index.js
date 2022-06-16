@@ -173,7 +173,11 @@ export default class Index extends Component {
     })
         .then((res) => {
           // console.log(res)
-          this.fetchSeries(1);
+          if (this.searchSeries === ''){
+            this.fetchSeries(1);
+          }else{
+            this.searchSeries(1);
+          }
           this.notify(res.data.success);
         })
         .catch((err) => {

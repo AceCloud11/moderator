@@ -19,9 +19,10 @@ import {
   AlertIcon,
 } from "@chakra-ui/react";
 import Hosts from "../../../components/Hosts";
-import { getNameFromUrl } from "../../../helpers/helpers";
+import {addSources, deleteSources, getNameFromUrl, updateSources, validateDomain} from "../../../helpers/helpers";
 import Source from "./components/Source";
 import log from "tailwindcss/lib/util/log";
+import Error from "../../../components/Error";
 
 export default function Sources() {
   const [sources, setSources] = useState([]);
@@ -31,7 +32,7 @@ export default function Sources() {
   const [errors, setErrors] = useState([]);
   const [srcId, setSrcId] = useState(null);
   const [hosts, setHosts] = useState([]);
-  const [vf, setVf] = useState(true);
+  const [vf, setVf] = useState(false);
   const [canAdd, setCanAdd] = useState(false);
 
   // change demain name
@@ -65,105 +66,35 @@ export default function Sources() {
   };
 
 
-  const addSources = async () => {
-    await axios({
-      url: "/moderator/movie-sources/" + id,
-      method: "post",
-      responseType: "json",
-      data: {
-        sources: lecteurs
-      },
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: "Bearer " + token,
-      },
-    })
-      .then(async (response) => {
-        toast.success(response.data.success);
-        setSrc("");
-        setErrors([]);
-        setName("");
-        onCloseCreate();
-        await fetchSources();
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-      });
-  };
+  // const addSources = async (arr) => {
+  //   await axios({
+  //     url: "/moderator/movie-sources/" + id,
+  //     method: "post",
+  //     responseType: "json",
+  //     data: {
+  //       sources: arr
+  //     },
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Accept: "application/json",
+  //       Authorization: "Bearer " + token,
+  //     },
+  //   })
+  //     .then(async (response) => {
+  //       toast.success(response.data.success);
+  //       setSrc("");
+  //       setErrors([]);
+  //       setName("");
+  //       onCloseCreate();
+  //       await fetchSources();
+  //     })
+  //     .catch((error) => {
+  //       toast.error(error.response.data.message);
+  //     });
+  // };
 
-  const updateSources = async () => {
-    setErrors([]);
-    if (name === "" || src === "") {
-      setErrors((old) => [...old, "Tout les champs est obligatoire"]);
-      return;
-    }
 
-    if (!src.includes("http://") && !src.includes("https://")) {
-      await setErrors((old) => [...old, "veuillez entrer un lien valide"]);
-      // setSrc("");
-      return;
-    }
 
-    // extract name from the url
-    let n = src.split("//")[1].split("/")[0];
-    
-    if (!hosts.includes(n)) {
-      await setErrors((old) => [...old, `la source ${n} n'est pas autorisée`]);
-      return;
-    }
-
-    await axios({
-      url: "/moderator/movie-sources/" + srcId,
-      method: "put",
-      responseType: "json",
-      data: {
-        name,
-        vf,
-        src,
-      },
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: "Bearer " + token,
-      },
-    })
-      .then(async (response) => {
-        toast.success(response.data.success);
-        setSrc("");
-        setErrors([]);
-        setName("");
-        onCloseEdit();
-        fetchSources();
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-      });
-  };
-
-  const deleteSources = async (srcid) => {
-    await axios({
-      url: "/moderator/movie-sources/" + srcid,
-      method: "delete",
-      responseType: "json",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: "Bearer " + token,
-      },
-    })
-      .then(async (response) => {
-        toast.success(response.data.success);
-        fetchSources();
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-      });
-  };
-
-  async function customSetState(setValue, value) {
-     setValue(value);
-  }
 
   const getHosts = async () => {
     axios({
@@ -177,16 +108,48 @@ export default function Sources() {
       },
     })
       .then(async (res) => {
-        // await setDashbaord(res.data);
         setHosts(res.data);
-
-        // console.log(res.data);
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    setErrors([]);
+    let sepeatedSources = src.split('\n');
+    let arr = validateDomain(sepeatedSources, hosts, vf);
+    if (arr[0].length){
+      setErrors(arr[0]);
+      return;
+    }else{
+      await addSources(arr[1], token, id);
+      onCloseCreate();
+      setVf(false);
+      setSrc('');
+      await fetchSources();
+    }
+  }
+
+const handleDelete = async (id) => {
+    await deleteSources(id, token);
+    await fetchSources();
+}
+
+  const handleEdit = async () => {
+    let err = await updateSources(name, src,srcId, token, hosts, vf);
+    if (err.length){
+      setErrors(err);
+      return ;
+    }
+    setSrc('');
+    setVf(false);
+    setSrcId('');
+    setName('');
+    onCloseEdit();
+    await fetchSources();
+  }
 
   const {
     isOpen: isOpenCreate,
@@ -292,7 +255,7 @@ export default function Sources() {
                       </button>
                       <button
                         className="font-medium text-red-600 dark:text-blue-500 hover:underline mr-3"
-                        onClick={(e) => deleteSources(src.id)}
+                        onClick={(e) => handleDelete(src.id)}
                       >
                         Supprimer
                       </button>
@@ -322,38 +285,30 @@ export default function Sources() {
           <ModalCloseButton />
           <ModalBody>
             <div>
-            <Source hosts={hosts} submit={(src) => {
-              setLecteurs(old => [...old, src]);
-              // console.log(src)
-            } }/>
-
-
-            {
-              lecteurs.length ?
-                  (
-                      <div className=" w-full overflow-x-scroll no-scroll">
-                      <table className="w-full">
-                        <thead className="bg-slate-300 border border-gray-300">
-                        <th className="p-2">Nom</th>
-                        <th className="p-2">Vesrion</th>
-                        <th className="p-2">Lien</th>
-                        </thead>
-                        <tbody>
-                        {
-                          lecteurs.map(lecteur => (
-                              <tr className='border border-gray-300'>
-                                <td className='border border-gray-300 p-2'>{lecteur.name}</td>
-                                <td className='border border-gray-300 p-2'>{lecteur.vf ? 'VF' : "VOSTFR"}</td>
-                                <td className='border border-gray-300 p-2'>{lecteur.src}</td>
-                              </tr>
-                          ))
-                        }
-                        </tbody>
-                      </table>
-                      </div>
-                  ) : null
-            }
-
+              <textarea
+                  rows="10"
+                  className="w-full border border-gray-200 rounded-md p-2 focus:outline-none focus:border-purple-400"
+                  value={src}
+                  onChange={e => {
+                    setSrc(e.target.value)
+                  }}
+              ></textarea>
+              <div className="flex gap-4 w-full">
+                <label className="label cursor-pointer space-x-2">
+                  <span className="label-text">VF</span>
+                  <input
+                      type="checkbox"
+                      checked={vf}
+                      value={vf}
+                      onChange={(e) => {
+                        setVf(!vf);
+                        console.log(vf)
+                      }}
+                      className="checkbox"
+                  />
+                </label>
+              </div>
+              <Error errors={errors}></Error>
             </div>
 
           </ModalBody>
@@ -373,7 +328,7 @@ export default function Sources() {
             >
               Close
             </Button>
-            <Button colorScheme="linkedin" onClick={addSources}>
+            <Button colorScheme="linkedin" onClick={handleAdd}>
               Ajouter
             </Button>
           </ModalFooter>
@@ -469,7 +424,7 @@ export default function Sources() {
             >
               Close
             </Button>
-            <Button colorScheme="linkedin" onClick={updateSources}>
+            <Button colorScheme="linkedin" onClick={handleEdit}>
               Modifier
             </Button>
           </ModalFooter>
@@ -477,4 +432,6 @@ export default function Sources() {
       </Modal>
     </div>
   );
+
+
 }

@@ -20,6 +20,8 @@ import {
 } from "@chakra-ui/react";
 import Hosts from "../../../components/Hosts";
 import EpisodeTableRow from "./components/EpisodeTableRow";
+import {addSources, deleteSources, updateSources, validateDomain} from "../../../helpers/helpers";
+import Error from "../../../components/Error";
 
 export default function Episodes() {
   const { token } = useContext(UserContext);
@@ -31,7 +33,8 @@ export default function Episodes() {
   const [num, setNum] = useState("");
   const [src, setSrc] = useState("");
   const [name, setName] = useState("");
-  const [hosts, setHosts] = useState([]);
+    const [hosts, setHosts] = useState([]);
+    const [childErr, setChildErr] = useState([]);
 
 
   let { serieId } = useParams();
@@ -77,7 +80,7 @@ export default function Episodes() {
     })
         .then(async (res) => {
           // await setDashbaord(res.data);
-          setHosts(res.data.map((el) => el.domain_name));
+          setHosts(res.data);
 
           // console.log(res.data);
         })
@@ -93,25 +96,14 @@ export default function Episodes() {
   } = useDisclosure();
 
   //create new episode
-  const createEpisodeSource = async () => {
-
-    if (src.includes("http://") || src.includes("https://")) {
-      let n = src.split("//")[1].split("/")[0];
-      if (!hosts.includes(n)) {
-        await setErrors((old) => [...old, `la source ${n} n'est pas autorisée`]);
-        return;
-      }
-      const data = {
-        num: parseInt(num),
-        vf: vf,
-        src: src,
-        name: name
-      };
-      setErrors([]);
-      await axios({
+  const createEpisodeSource =  async (arr, num) => {
+       await axios({
         url: "/moderator/episodes/" + serieId,
         method: "post",
-        data,
+        data: {
+          num,
+          sources: arr,
+        },
         responseType: "json",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -119,35 +111,32 @@ export default function Episodes() {
           "Content-Type": "application/json",
         },
       })
-          .then(async (res) => {
+          .then( (res) => {
             // console.log(res.data);
             if (res.data.error) {
-              await setErrors((old) => [...old, res.data.error]);
+               setErrors((old) => [...old, res.data.error]);
+                setChildErr(old => [...old, res.data.error])
             } else {
               setErrors([]);
               setSrc("");
               setNum("");
-              setName('');
               setVf(false);
               makeToast('success', res.data.success);
 
               onCloseCreateSource();
-              await fetchEpisodes();
+               fetchEpisodes();
 
             }
           })
-          .catch(async (err) => {
+          .catch( (err) => {
             // console.log(err.response);
-            await setErrors((old) => [...old, err.response.data.message]);
+            setErrors((old) => [...old, err.response.data.message]);
+              setChildErr(old => [...old, err.response.data.message])
           });
-    } else {
-      await setErrors((old) => [...old, "veuillez entrer un lien valide"]);
-      // setSrc("");
-      return;
+       return childErr;
     }
 
-    // extract name from the url
-  }
+
 
 
 
@@ -159,6 +148,23 @@ export default function Episodes() {
    }
 
   }
+
+  const handleAdd = async (e, src, num, vf) => {
+    e.preventDefault();
+    setErrors([]);
+    setChildErr([]);
+    let sepeatedSources = src.split('\n');
+    let arr = validateDomain(sepeatedSources, hosts, vf);
+    if (arr[0].length){
+      setErrors(arr[0]);
+      return arr[0];
+    }else{
+       return  createEpisodeSource(arr[1], num);
+       // return childErr;
+    }
+  }
+
+
 
   useEffect(async () => {
     await fetchEpisodes();
@@ -210,6 +216,10 @@ export default function Episodes() {
                       fetch={fetchEpisodes}
                       makeToast={makeToast}
                       token={token}
+                      handleAdd={handleAdd}
+                      clearErrors={() => {
+                          setChildErr([]);
+                      }}
                   />
                 ))
               : null}
@@ -239,20 +249,19 @@ export default function Episodes() {
                   <input
                       type="number"
                       placeholder="Numéro d'épisode"
-                      className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
+                      className="w-full p-2 rounded-md border focus:outline-none focus:border-purple-400 border-gray-300"
                       value={num}
                       onChange={(e) => setNum(e.target.value)}
                   />
                 </div>
-                <div className="flex gap-4">
-                  <input
-                      type="text"
-                      placeholder="nom de lecteur"
-                      className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
+                <textarea
+                    rows="10"
+                    className="w-full border border-gray-200 rounded-md p-2 focus:outline-none focus:border-purple-400"
+                    value={src}
+                    onChange={e => {
+                      setSrc(e.target.value)
+                    }}
+                ></textarea>
                 <div className="flex gap-4">
                   <label className="label cursor-pointer space-x-2">
                     <span className="label-text">VF</span>
@@ -268,30 +277,7 @@ export default function Episodes() {
                   </label>
                 </div>
 
-                <div className="flex gap-4">
-                  <input
-                      type="text"
-                      placeholder="lien de lecteur"
-                      className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                      value={src}
-                      onChange={(e) => setSrc(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-4 my-4">
-                  {errors.length
-                      ? errors.map((error) => (
-                          <Alert
-                              status="error"
-                              className="rounded-md"
-                              key={error}
-                          >
-                            <AlertIcon />
-                            {error}
-                          </Alert>
-                      ))
-                      : null}
-                </div>
+                <Error errors={errors} ></Error>
               </form>
             </div>
           </ModalBody>
@@ -311,7 +297,7 @@ export default function Episodes() {
             >
               Close
             </Button>
-            <Button colorScheme="linkedin" onClick={createEpisodeSource}>
+            <Button colorScheme="linkedin" onClick={(e) => handleAdd(e, src, num, vf)}>
               Ajouter
             </Button>
           </ModalFooter>

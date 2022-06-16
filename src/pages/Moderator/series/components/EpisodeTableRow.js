@@ -14,8 +14,10 @@ import axios from "axios";
 
 import {useParams} from "react-router-dom";
 import UserContext from "../../../../Context/UserContext";
+import Error from "../../../../components/Error";
+import log from "tailwindcss/lib/util/log";
 
-export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token }){
+export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token, handleAdd, clearErrors }){
 
 
     const [showSources, setShowSources] = React.useState(false);
@@ -184,6 +186,7 @@ export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token })
             setName("");
             setErrors([]);
             setVf(false);
+            clearErrors();
           }}
         >
           <ModalOverlay />
@@ -193,15 +196,14 @@ export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token })
             <ModalBody>
               <div>
                 <form action="" className="space-y-4">
-                  <div className="flex gap-4">
-                    <input
-                      type="text"
-                      placeholder="nom de lecteur"
-                      className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  </div>
+                  <textarea
+                      rows="10"
+                      className="w-full border border-gray-200 rounded-md p-2 focus:outline-none focus:border-purple-400"
+                      value={src}
+                      onChange={e => {
+                          setSrc(e.target.value)
+                      }}
+                  ></textarea>
                   <div className="flex gap-4">
                     <label className="label cursor-pointer space-x-2">
                       <span className="label-text">VF</span>
@@ -217,30 +219,7 @@ export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token })
                     </label>
                   </div>
 
-                  <div className="flex gap-4">
-                    <input
-                      type="text"
-                      placeholder="lien de lecteur"
-                      className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
-                      value={src}
-                      onChange={(e) => setSrc(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="space-y-4 my-4">
-                    {errors.length
-                      ? errors.map((error) => (
-                          <Alert
-                            status="error"
-                            className="rounded-md"
-                            key={error}
-                          >
-                            <AlertIcon />
-                            {error}
-                          </Alert>
-                        ))
-                      : null}
-                  </div>
+                    <Error errors={errors} />
                 </form>
               </div>
             </ModalBody>
@@ -256,11 +235,28 @@ export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token })
                   setName("");
                   setErrors([]);
                   setVf(false);
+                  clearErrors()
                 }}
               >
                 Annuler
               </Button>
-              <Button colorScheme="linkedin" onClick={createEpisodeSource}>
+              <Button colorScheme="linkedin" onClick={(e) => {
+                  setErrors([]);
+                  handleAdd(e, src, num, vf).then(res => {
+                      // console.log(res)
+                      // console.log(Object.keys(res).length)
+                      if (Object.keys(res).length === 0) {
+                          setSrc('');
+                          setNum('');
+                          setVf(false);
+                          onCloseCreateSource();
+                          setErrors([]);
+                      }else{
+                          setErrors(res);
+                      }
+                  });
+
+              }}>
                 Ajouter
               </Button>
             </ModalFooter>

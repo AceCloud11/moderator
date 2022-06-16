@@ -1,5 +1,6 @@
 import React, {Fragment, useState} from "react";
 import Error from "../../../../components/Error";
+import {Button, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader} from "@chakra-ui/react";
 
 export default function Source({ hosts, submit }) {
     const [link, setLink] = useState('');
@@ -88,6 +89,69 @@ export default function Source({ hosts, submit }) {
                 </div>
 
             </form>
+
+
+            {/*<ModalContent>*/}
+            {/*    <ModalHeader>Lecteur</ModalHeader>*/}
+            {/*    <ModalCloseButton />*/}
+            {/*    <ModalBody>*/}
+            {/*        <div>*/}
+            {/*            <Source hosts={hosts} submit={(src) => {*/}
+            {/*                setLecteurs(old => [...old, src]);*/}
+            {/*                // console.log(src)*/}
+            {/*            } }/>*/}
+
+
+            {/*            {*/}
+            {/*                lecteurs.length ?*/}
+            {/*                    (*/}
+            {/*                        <div className=" w-full overflow-x-scroll no-scroll">*/}
+            {/*                            <table className="w-full">*/}
+            {/*                                <thead className="bg-slate-300 border border-gray-300">*/}
+            {/*                                <th className="p-2">Nom</th>*/}
+            {/*                                <th className="p-2">Vesrion</th>*/}
+            {/*                                <th className="p-2">Lien</th>*/}
+            {/*                                </thead>*/}
+            {/*                                <tbody>*/}
+            {/*                                {*/}
+            {/*                                    lecteurs.map(lecteur => (*/}
+            {/*                                        <tr className='border border-gray-300'>*/}
+            {/*                                            <td className='border border-gray-300 p-2'>{lecteur.name}</td>*/}
+            {/*                                            <td className='border border-gray-300 p-2'>{lecteur.vf ? 'VF' : "VOSTFR"}</td>*/}
+            {/*                                            <td className='border border-gray-300 p-2'>{lecteur.src}</td>*/}
+            {/*                                        </tr>*/}
+            {/*                                    ))*/}
+            {/*                                }*/}
+            {/*                                </tbody>*/}
+            {/*                            </table>*/}
+            {/*                        </div>*/}
+            {/*                    ) : null*/}
+            {/*            }*/}
+
+            {/*        </div>*/}
+
+            {/*    </ModalBody>*/}
+
+            {/*    <ModalFooter>*/}
+            {/*        <Button*/}
+            {/*            colorScheme="blue"*/}
+            {/*            mr={3}*/}
+            {/*            onClick={async () => {*/}
+            {/*                onCloseCreate();*/}
+            {/*                await setSrc("");*/}
+            {/*                await setName("");*/}
+            {/*                setVf(true);*/}
+            {/*                setErrors([]);*/}
+            {/*                setLecteurs([])*/}
+            {/*            }}*/}
+            {/*        >*/}
+            {/*            Close*/}
+            {/*        </Button>*/}
+            {/*        <Button colorScheme="linkedin" onClick={addSources}>*/}
+            {/*            Ajouter*/}
+            {/*        </Button>*/}
+            {/*    </ModalFooter>*/}
+            {/*</ModalContent>*/}
         </Fragment>
     )
 }
