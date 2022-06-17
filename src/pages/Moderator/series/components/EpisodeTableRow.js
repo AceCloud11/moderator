@@ -18,7 +18,7 @@ import Error from "../../../../components/Error";
 import log from "tailwindcss/lib/util/log";
 import {toast} from "react-toastify";
 
-export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token, handleAdd, clearErrors }){
+export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token, handleAdd }){
 
 
     const [showSources, setShowSources] = React.useState(false);
@@ -215,7 +215,6 @@ export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token, h
             setName("");
             setErrors([]);
             setVf(false);
-            clearErrors();
           }}
         >
           <ModalOverlay />
@@ -264,7 +263,6 @@ export default function EpisodeTableRow( { ep, hosts, fetch, makeToast, token, h
                   setName("");
                   setErrors([]);
                   setVf(false);
-                  clearErrors()
                 }}
               >
                 Annuler

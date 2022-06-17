@@ -13,12 +13,8 @@ import {
     ModalBody,
     ModalCloseButton,
     useDisclosure,
-    Alert,
-    AlertIcon,
     Button,
-    useToast,
 } from "@chakra-ui/react";
-import Hosts from "../../../components/Hosts";
 import EpisodeTableRow from "./components/EpisodeTableRow";
 import {addSources, deleteSources, updateSources, validateDomain} from "../../../helpers/helpers";
 import Error from "../../../components/Error";
@@ -34,7 +30,6 @@ export default function Episodes() {
     const [src, setSrc] = useState("");
     const [name, setName] = useState("");
     const [hosts, setHosts] = useState([]);
-    const [childErr, setChildErr] = useState([]);
 
 
     let {serieId} = useParams();
@@ -79,7 +74,6 @@ export default function Episodes() {
             },
         })
             .then(async (res) => {
-                // await setDashbaord(res.data);
                 setHosts(res.data);
 
                 // console.log(res.data);
@@ -97,6 +91,7 @@ export default function Episodes() {
 
     //create new episode
     const createEpisodeSource = async (arr, num) => {
+        let errors = [];
         await axios({
             url: "/moderator/episodes/" + serieId,
             method: "post",
@@ -113,27 +108,27 @@ export default function Episodes() {
         })
             .then((res) => {
                 // console.log(res.data);
-                if (res.data.error) {
-                    setErrors((old) => [...old, res.data.error]);
-                    setChildErr(old => [...old, res.data.error])
-                } else {
+                if (res.data.success) {
                     setErrors([]);
                     setSrc("");
                     setNum("");
                     setVf(false);
                     makeToast('success', res.data.success);
-
                     onCloseCreateSource();
                     fetchEpisodes();
+                    errors = [];
 
+                } else {
+                    setErrors((old) => [...old, res.data.error]);
+                    errors.push(res.data.error);
                 }
             })
             .catch((err) => {
                 // console.log(err.response);
                 setErrors((old) => [...old, err.response.data.message]);
-                setChildErr(old => [...old, err.response.data.message])
+                errors.push(err.response.data.message);
             });
-        return childErr;
+        return errors;
     }
 
 
@@ -149,14 +144,13 @@ export default function Episodes() {
     const handleAdd = async (e, src, num, vf) => {
         e.preventDefault();
         setErrors([]);
-        setChildErr([]);
-        let sepeatedSources = src.split('\n');
-        let arr = validateDomain(sepeatedSources, hosts, vf);
+        let seperatedSources = src.split('\n');
+        let arr = validateDomain(seperatedSources, hosts, vf);
         if (arr[0].length) {
             setErrors(arr[0]);
             return arr[0];
         } else {
-            return createEpisodeSource(arr[1], num);
+            return await createEpisodeSource(arr[1], num);
             // return childErr;
         }
     }
@@ -218,9 +212,7 @@ export default function Episodes() {
                                 makeToast={makeToast}
                                 token={token}
                                 handleAdd={handleAdd}
-                                clearErrors={() => {
-                                    setChildErr([]);
-                                }}
+
                             />
                         ))
                         : null}
