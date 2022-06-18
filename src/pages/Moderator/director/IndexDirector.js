@@ -232,12 +232,12 @@ export default function IndexActor() {
             </button> */}
           </div>
 
-          <button
-            className="block px-4 py-2 rounded-md bg-indigo-600 text-white"
-            onClick={onOpenCreate}
-          >
-            Ajouter un Directeur
-          </button>
+          {/*<button*/}
+          {/*  className="block px-4 py-2 rounded-md bg-indigo-600 text-white"*/}
+          {/*  onClick={onOpenCreate}*/}
+          {/*>*/}
+          {/*  Ajouter un Directeur*/}
+          {/*</button>*/}
         </div>
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

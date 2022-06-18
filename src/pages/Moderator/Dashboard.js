@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
 import IndexCategories from "./categories/IndexCategories";
-import TestTable from "./categories/TestTable";
+// import TestTable from "./categories/TestTable";
 import IndexComments from "./comments/IndexComments";
 import Create from "./movies/Create";
 import Edit from "./movies/Edit";
-import IndexMovies from "./movies/IndexMovies";
+import IndexMoviesOld from "./movies/IndexMovies";
 import IndexReports from "./reports/IndexReports";
 
 import CreateSerie from "./series/Create";
@@ -310,7 +310,7 @@ export default function Dashboard() {
           <Switch>
             {/* Movies Routes */}
             <Route exact path="/moderator/movies">
-              <IndexMovies />
+              <IndexMoviesOld />
             </Route>
             <Route path="/moderator/movies/create">
               <Create />
