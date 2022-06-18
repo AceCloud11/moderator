@@ -26,11 +26,20 @@ export default class Index extends Component {
 
 
   searchSeries = async (page) => {
-    let url =
-      "/moderator/posts?type=serie&search=" +
-      this.state.search +
-      "&page=" +
-      page;
+    let url;
+
+
+    if (!this.state.trash) {
+      url = "/moderator/posts?type=serie&search=" +
+          this.state.search +
+          "&page=" +
+          page;
+    } else {
+      url = "/moderator/posts?type=serie&trash=1&search=" +
+          this.state.search +
+          "&page=" +
+          page;
+    }
 
     axios({
       url,
@@ -55,9 +64,17 @@ export default class Index extends Component {
   };
 
   searchSeriesId = async () => {
-    let url = "/moderator/posts/" + this.state.searchId;
-
+    let url;
     if (this.state.searchId !== "") {
+
+      if (!this.state.trash) {
+        url = "/moderator/posts?type=serie&id=" +
+            this.state.searchId
+      } else {
+        url = "/moderator/posts?type=serie&trash=1&id=" +
+            this.state.searchId
+      }
+
       await axios({
         url,
         method: "GET",
@@ -69,10 +86,10 @@ export default class Index extends Component {
         },
       })
         .then(async (response) => {
-          let arr = [];
-          arr.push(response.data);
+          // let arr = [];
+          // arr.push(response.data);
           await this.setState({
-            series: arr,
+            series: response.data.data,
             currentPage: 1,
             lastPage: 1,
           });
