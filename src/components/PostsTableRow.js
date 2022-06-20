@@ -2,7 +2,7 @@ import React, {Fragment, useContext} from "react";
 import UserContext from "../Context/UserContext";
 import {addToSlider, deletePost, forceDelete, handleApprove, restore} from "../helpers/posts";
 
-export default function PostsTableRow({ movies, fetch }){
+export default function PostsTableRow({ movies, fetch, type }){
     const { token, role } = useContext(UserContext);
 
     return (
@@ -28,7 +28,7 @@ export default function PostsTableRow({ movies, fetch }){
                             movie.deleted_at == null ? (
                                     <td className="px-6 py-4 text-right space-x-4">
                                         <a
-                                            href={`/moderator/movies/${movie.id}/edit`}
+                                            href={`/moderator/${type === 'movie' ? 'movies' : 'series'}/${movie.id}/edit`}
                                             className="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"
                                         >
                                             Modifier
@@ -69,7 +69,7 @@ export default function PostsTableRow({ movies, fetch }){
                                                 await addToSlider(movie.id, token)
                                             }}
                                         >
-                                            Ajouter au curseur
+                                            Ajouter au BoxOffice
                                         </button>
 
                                         <a

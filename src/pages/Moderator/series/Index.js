@@ -310,6 +310,7 @@ export default class Index extends Component {
             <tbody>
                 <PostsTableRow
                     movies={this.state.series}
+                    type="serie"
                     fetch={() => {
                   fetchPosts(1, this.state.token, this.state.trash, 'serie').then(res => {
                     this.setState({

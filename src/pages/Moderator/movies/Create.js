@@ -35,11 +35,13 @@ export default class Create extends Component {
             src: "",
             errors: [],
             token: "",
-            bg: "",
+            // bg: "",
             allowComments: false,
             vf: false,
             first: false,
             vostfr: false,
+            file: null,
+            isLocal: false,
         };
     }
 
@@ -150,15 +152,58 @@ export default class Create extends Component {
         return lang;
     }
 
-    // Create a new movie
-    handleSubmit = async (e) => {
+    sendImage = async (e) => {
         e.preventDefault();
+        await this.setState({
+            errors: [],
+        });
+
+        if (this.state.file === null && this.state.image === ""){
+            this.setState({
+                errors: [...this.state.errors, "fournir soit l'URL de l'image, soit le fichier image local"]
+            })
+            return ;
+        }
+
+        const fd = new FormData();
+        if (this.state.file){
+            fd.append('image', this.state.file);
+        }else{
+            fd.append('img', this.state.image);
+        }
+
+
+        await axios({
+            url: "/moderator/posts/image",
+            method: "post",
+            data: fd,
+            responseType: "json",
+            headers: {
+                Authorization: `Bearer ${this.state.token}`,
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+        }).then(res => {
+
+            if (res.data.img !== '') {
+                this.handleSubmit(res.data.img);
+            }
+        })
+            .catch(err => {
+                this.setState({
+                    errors: [...this.state.errors, err.response.data.message],
+                });
+            })
+    }
+
+    // Create a new movie
+    handleSubmit = async (img) => {
         const data = {
             title: this.state.title,
             duration: this.state.duration,
             origin: this.state.origin,
             year: this.state.year,
-            img: this.state.image,
+            img: img,
             actors: this.state.actors,
             categories: this.state.cats,
             directors: this.state.directors,
@@ -168,21 +213,16 @@ export default class Create extends Component {
             is_approved: 0,
             tags: this.state.tags,
             type: "movie",
-            bg: this.state.bg,
             allow_comments: this.state.allowComments ? 1 : 0,
             is_first: this.state.first ? 1 : 0,
         };
+
         // console.log(data);
         // return null;
-
-        await this.setState({
-            errors: [],
-        });
-
         await axios({
             url: "/moderator/posts",
             method: "post",
-            data,
+            data: data,
             responseType: "json",
             headers: {
                 Authorization: `Bearer ${this.state.token}`,
@@ -192,6 +232,7 @@ export default class Create extends Component {
         })
             .then(async (res) => {
                 // console.log(res.data);
+
                 await this.setState({
                     errors: [],
                     duration: "",
@@ -217,6 +258,7 @@ export default class Create extends Component {
                     vostfr: false,
                     first: false,
                     allowComments: false,
+                    file: null,
                 });
 
                 window.location.href = "/moderator/movies";
@@ -628,19 +670,7 @@ export default class Create extends Component {
                         </article>
                     </fieldset>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/*<input*/}
-                        {/*  type="text"*/}
-                        {/*  placeholder="Langue"*/}
-                        {/*  className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"*/}
-                        {/*  value={this.state.language}*/}
-                        {/*  onChange={(e) => this.setState({ language: e.target.value })}*/}
-                        {/*/>*/}
-                        {/*<div className="flex gap-4">*/}
-                        {/*  */}
-
-                        {/*  */}
-                        {/*</div>*/}
+                    <div className="grid grid-cols-1 gap-4">
                         <input
                             type="text"
                             placeholder="Qualité"
@@ -649,41 +679,86 @@ export default class Create extends Component {
                             onChange={(e) => this.setState({quality: e.target.value})}
                         />
                     </div>
+                    <div className="flex gap-4">
+                        <input
+                            type="text"
+                            placeholder="Image"
+                            className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300 flex-1"
+                            value={this.state.image}
+                            onChange={(e) => this.setState({image: e.target.value})}
+                        />
+                        <button
+                            onClick={e => {
+                                e.preventDefault();
+                                this.setState({
+                                    image: null,
+                                    isLocal: true,
+                                });
+                            }}
+                            className="flex gap-2 items-center border-2 border-gray-300 p-2 rounded-md"
+                        >
+                            <span>fichier local</span>
+                            <i className="fa fa-edit text-xl"></i>
+                        </button>
+                    </div>
+
+                    {/* upload image */}
+                    {
+                        this.state.isLocal ? (
+                                <div>
+
+                                    <h1 className="text-xl font-bold mb-4">Choisissez plutôt un fichier</h1>
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <input
+                                            type="file"
+                                            className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300 flex-1"
+                                            name='file'
+                                            onChange={(e) => {
+                                                this.setState({
+                                                    file: e.target.files[0]
+                                                });
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            )
+                            : null
+                    }
                     <div className="flex gap-4 flex-wrap">
-            <textarea
-                name=""
-                id=""
-                rows="10"
-                className="p-2 rounded-md border-2 focus:outline-none border-gray-300 flex-grow"
-                placeholder="description"
-                value={this.state.overview}
-                onChange={(e) => this.setState({overview: e.target.value})}
-            ></textarea>
+                        <textarea
+                            name=""
+                            id=""
+                            rows="10"
+                            className="p-2 rounded-md border-2 focus:outline-none border-gray-300 flex-grow"
+                            placeholder="description"
+                            value={this.state.overview}
+                            onChange={(e) => this.setState({overview: e.target.value})}
+                        ></textarea>
                         <img
                             alt=""
                             // width="400"
                             id="poster"
                             // style={{ maxHeight: 400 }}
                             className="block w-full lg:w-1/4"
-                            src={this.state.image}
+                            src={this.state.image  }
                         />
                     </div>
 
-                    <div className="flex gap-4 flex-wrap">
-                        <input
-                            type="text"
-                            className="p-2 rounded-md border-2 focus:outline-none border-gray-300 flex-grow"
-                            value={this.state.bg}
-                            placeholder="Image de fond"
-                            onChange={(e) => this.setState({bg: e.target.value})}
-                        />
-                        <img
-                            alt=""
-                            id="poster"
-                            className="block w-fit"
-                            src={this.state.bg}
-                        />
-                    </div>
+                    {/*<div className="flex gap-4 flex-wrap">*/}
+                    {/*    <input*/}
+                    {/*        type="text"*/}
+                    {/*        className="p-2 rounded-md border-2 focus:outline-none border-gray-300 flex-grow"*/}
+                    {/*        value={this.state.bg}*/}
+                    {/*        placeholder="Image de fond"*/}
+                    {/*        onChange={(e) => this.setState({bg: e.target.value})}*/}
+                    {/*    />*/}
+                    {/*    <img*/}
+                    {/*        alt=""*/}
+                    {/*        id="poster"*/}
+                    {/*        className="block w-fit"*/}
+                    {/*        src={this.state.bg}*/}
+                    {/*    />*/}
+                    {/*</div>*/}
 
                     <fieldset className="border-2 border-gray-300 rounded-md p-4 space-y-4">
                         <legend className="text-xl font-semibold">
@@ -882,7 +957,7 @@ export default class Create extends Component {
                         <Error errors={this.state.errors}/>
                     </div>
 
-                    <button className="btn btn-accent" onClick={this.handleSubmit}>
+                    <button className="btn btn-accent" onClick={this.sendImage}>
                         Ajouter
                     </button>
                 </form>

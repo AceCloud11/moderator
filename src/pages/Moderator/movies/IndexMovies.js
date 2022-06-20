@@ -301,7 +301,9 @@ export default class IndexMovies extends Component {
                         </tr>
                         </thead>
                         <tbody>
-                            <PostsTableRow movies={this.state.movies} fetch={() => {
+                            <PostsTableRow
+                                movies={this.state.movies}
+                                fetch={() => {
                                 fetchPosts(1, this.state.token, this.state.trash, 'movie').then(res => {
                                     this.setState({
                                         movies: res.data,
@@ -309,7 +311,9 @@ export default class IndexMovies extends Component {
                                         lastPage: res.lastPage
                                     });
                                 })
-                            }}/>
+                            }}
+                                type="movie"
+                            />
                         </tbody>
 
                         {this.state.lastPage > 1 ? (

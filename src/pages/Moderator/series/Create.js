@@ -38,6 +38,8 @@ export default class Create extends Component {
       season: "",
       first: false,
       allowComments: false,
+      file: null,
+      isLocal: false,
     };
   }
 
@@ -105,13 +107,56 @@ export default class Create extends Component {
     }
   };
 
-  handleSubmit = async (e) => {
+  sendImage = async (e) => {
     e.preventDefault();
+    await this.setState({
+      errors: [],
+    });
+
+    if (this.state.file === null && this.state.image === ""){
+      this.setState({
+        errors: [...this.state.errors, "fournir soit l'URL de l'image, soit le fichier image local"]
+      })
+      return ;
+    }
+
+    const fd = new FormData();
+    if (this.state.file){
+      fd.append('image', this.state.file);
+    }else{
+      fd.append('img', this.state.image);
+    }
+
+
+    await axios({
+      url: "/moderator/posts/image",
+      method: "post",
+      data: fd,
+      responseType: "json",
+      headers: {
+        Authorization: `Bearer ${this.state.token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }).then(res => {
+
+      if (res.data.img !== '') {
+        this.handleSubmit(res.data.img);
+      }
+    })
+        .catch(err => {
+          this.setState({
+            errors: [...this.state.errors, err.response.data.message],
+          });
+        })
+  }
+
+  handleSubmit = async (img) => {
     const data = {
       title: `${this.state.title} Season ${this.state.season}`,
       origin: this.state.origin,
       year: this.state.year,
-      img: this.state.image,
+      img: img,
       actors: this.state.actors,
       categories: this.state.categories,
       directors: this.state.directors,
@@ -129,9 +174,6 @@ export default class Create extends Component {
     // console.log(data);
     // return null;
 
-    await this.setState({
-      errors: [],
-    });
 
     await axios({
       url: "/moderator/posts",
@@ -533,6 +575,53 @@ export default class Create extends Component {
               onChange={(e) => this.setState({ quality: e.target.value })}
             />
           </div>
+
+          {/* Image */}
+          <div className="flex gap-4">
+            <input
+                type="text"
+                placeholder="Image"
+                className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300 flex-1"
+                value={this.state.image}
+                onChange={(e) => this.setState({image: e.target.value})}
+            />
+            <button
+                onClick={e => {
+                  e.preventDefault();
+                  this.setState({
+                    image: null,
+                    isLocal: true,
+                  });
+                }}
+                className="flex gap-2 items-center border-2 border-gray-300 p-2 rounded-md"
+            >
+              <span>fichier local</span>
+              <i className="fa fa-edit text-xl"></i>
+            </button>
+          </div>
+
+          {/* upload image */}
+          {
+            this.state.isLocal ? (
+                    <div>
+
+                      <h1 className="text-xl font-bold mb-4">Choisissez plutôt un fichier</h1>
+                      <div className="grid grid-cols-1 gap-4">
+                        <input
+                            type="file"
+                            className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300 flex-1"
+                            name='file'
+                            onChange={(e) => {
+                              this.setState({
+                                file: e.target.files[0]
+                              });
+                            }}
+                        />
+                      </div>
+                    </div>
+                )
+                : null
+          }
           <div className="flex gap-4 flex-wrap">
             <textarea
               rows="10"
@@ -725,7 +814,7 @@ export default class Create extends Component {
               : null}
           </div>
 
-          <button className="btn btn-accent" onClick={this.handleSubmit}>
+          <button className="btn btn-accent" onClick={this.sendImage}>
             Ajouter
           </button>
         </form>
