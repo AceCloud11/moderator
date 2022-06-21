@@ -374,7 +374,9 @@ class Edit extends Component {
                                 (
                                     <article>
                                         <div className='w-full'>
-                                            <input type="date" value={this.state.ranking_date} className="w-full p-2 mt-2 rounded-md border-2 border-gray-300"/>
+                                            <input type="date" value={this.state.ranking_date}
+                                                   onChange={e => this.setState({ ranking_date: e.target.value})}
+                                                   className="w-full p-2 mt-2 rounded-md border-2 border-gray-300"/>
                                         </div>
                                     </article>
                                 )
