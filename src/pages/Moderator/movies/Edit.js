@@ -45,6 +45,7 @@ class Edit extends Component {
             approved: false,
             isLocal: false,
             file: null,
+            ranking_date: null,
         };
     }
 
@@ -128,7 +129,7 @@ class Edit extends Component {
                     image: res.data.img,
                     tags: res.data.tags,
                     bg: res.data.bg,
-                    first: res.data.is_first,
+                    ranking_date: res.data.ranking_date,
                     allowComments: res.data.allow_comments,
                     vf: res.data.lang == "VF" || res.data.lang == "VF / VOSTFR" ? true : false,
                     vostfr: res.data.lang == "VOSTFR" || res.data.lang == "VF / VOSTFR" ? true : false,
@@ -212,8 +213,9 @@ class Edit extends Component {
             tags: this.state.tags,
             type: "movie",
             bg: this.state.bg,
-            is_first: this.state.first ? 1 : 0,
+            // is_first: this.state.first ? 1 : 0,
             is_approved: this.state.approved,
+            ranking_date: this.state.ranking_date
         };
 
         // console.log(data);
@@ -261,6 +263,7 @@ class Edit extends Component {
                     allowComments: false,
                     vf: false,
                     vostfr: false,
+                    ranking_date: null,
                 });
 
                 window.location.href = "/moderator/movies";
@@ -308,9 +311,9 @@ class Edit extends Component {
                         <legend className="text-xl font-semibold">Actions</legend>
 
                         <article className="flex flex-wrap gap-4">
-                            {/*  is first */}
+                              {/*is first */}
                             <label className="label cursor-pointer space-x-2">
-                                <span className="label-text">Afficher En Premier</span>
+                                <span className="label-text">Changer la date</span>
                                 <input
                                     type="checkbox"
                                     checked={this.state.first}
@@ -365,6 +368,18 @@ class Edit extends Component {
                                 />
                             </label>
                         </article>
+
+                        {
+                            this.state.first ?
+                                (
+                                    <article>
+                                        <div className='w-full'>
+                                            <input type="date" value={this.state.ranking_date} className="w-full p-2 mt-2 rounded-md border-2 border-gray-300"/>
+                                        </div>
+                                    </article>
+                                )
+                                : null
+                        }
                     </fieldset>
 
                     <div className="flex gap-4">
@@ -407,7 +422,7 @@ class Edit extends Component {
                                 className="block"
                                 src={this.state.image}
                             />
-                            <i className="fa fa-edit absolute top-3 text-xl text-white right-4 cursor-pointer"
+                            <i className="fa fa-edit absolute top-3 text-xl text-blue-500 right-4 cursor-pointer"
                                onClick={() => {
                                    this.setState({
                                        isLocal: true,
@@ -415,6 +430,15 @@ class Edit extends Component {
                                }}></i>
                         </div>
                     </div>
+
+                    <button>
+                        <i className="fa fa-edit absolute top-3 text-xl text-white right-4 cursor-pointer"
+                           onClick={() => {
+                               this.setState({
+                                   isLocal: true,
+                               })
+                           }}></i>
+                    </button>
 
 
                     {

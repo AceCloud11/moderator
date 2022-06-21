@@ -25,6 +25,7 @@ export default function IndexCategories() {
   const [categoryId, setCategoryId] = useState("");
   const [categoryNew, setCategoryNew] = useState("");
   const [errors, setErrors] = useState([]);
+  const [first, setFirst] = useState(false);
 
   const [search, setSearch] = useState('');
 
@@ -58,7 +59,7 @@ export default function IndexCategories() {
       responseType: "json",
       data: {
         name: categoryNew,
-        bg: null,
+        is_first: first,
       },
       headers: {
         "Content-Type": "application/json",
@@ -71,8 +72,9 @@ export default function IndexCategories() {
         await setCategoryNew("");
         onCloseCreate();
         setErrors([]);
-        fetchCats();
-        notify(res.data.message);
+        setFirst(false);
+        await fetchCats();
+        notify(res.data.success);
       })
       .catch((error) => {
         setErrors((old) => [...old, error.response.data.message]);
@@ -86,6 +88,7 @@ export default function IndexCategories() {
       responseType: "json",
       data: {
         name: category,
+        is_first: first
       },
       headers: {
         "Content-Type": "application/json",
@@ -99,8 +102,9 @@ export default function IndexCategories() {
         await setCategoryId("");
         onCloseEdit();
         setErrors([]);
-        fetchCats();
-        notify(res.data.message);
+        setFirst(false);
+        await fetchCats();
+        notify(res.data.success);
       })
       .catch((error) => {
         setErrors((old) => [...old, error.response.data.message]);
@@ -122,8 +126,8 @@ export default function IndexCategories() {
       },
     })
       .then(async (res) => {
-        fetchCats();
-        notify(res.data.message);
+        await fetchCats();
+        notify(res.data.success);
       })
       .catch((error) => {
         console.log(error);
@@ -210,6 +214,10 @@ export default function IndexCategories() {
                 Nom du category
               </th>
 
+              <th scope="col" className="px-6 py-3">
+                Afficher En Premier
+              </th>
+
               <th scope="col" className="px-6 py-3 text-center">
                 <span>Actions</span>
               </th>
@@ -224,16 +232,23 @@ export default function IndexCategories() {
                   >
                     <th
                       scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                      className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap "
                     >
                       {cat.id}
                     </th>
 
                     <th
                         scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                        className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap capitalize"
                     >
                       {cat.name}
+                    </th>
+
+                    <th
+                        scope="row"
+                        className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                    >
+                      {cat.is_first == 1 ? "Oui" : "Non"}
                     </th>
 
                     <td className="px-6 py-4 text-center">
@@ -242,6 +257,7 @@ export default function IndexCategories() {
                         onClick={() => {
                           setCategory(cat.name);
                           setCategoryId(cat.id);
+                          setFirst(cat.is_first == 1 ? true : false);
                           onOpenEdit();
                         }}
                       >
@@ -286,6 +302,18 @@ export default function IndexCategories() {
                 className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
               />
             </div>
+            <label className="label cursor-pointer space-x-2 flex items-center justify-start mt-4">
+              <input
+                  type="checkbox"
+                  checked={first}
+                  value={first}
+                  className="checkbox"
+                  onChange={e => {
+                    setFirst(e.target.checked);
+                  }}
+              />
+              <span className="label-text">Afficher En Premier</span>
+            </label>
             <Error errors={errors} />
           </ModalBody>
 
@@ -331,6 +359,18 @@ export default function IndexCategories() {
                 className="w-full p-2 rounded-md border-2 focus:outline-none border-gray-300"
               />
             </div>
+            <label className="label cursor-pointer space-x-2 flex items-center justify-start mt-4">
+              <input
+                  type="checkbox"
+                  checked={first}
+                  value={first}
+                  className="checkbox"
+                  onChange={e => {
+                    setFirst(e.target.checked);
+                  }}
+              />
+              <span className="label-text">Afficher En Premier</span>
+            </label>
             <Error errors={errors} />
           </ModalBody>
 

@@ -198,6 +198,7 @@ export default class Create extends Component {
 
     // Create a new movie
     handleSubmit = async (img) => {
+        let date = new Date();
         const data = {
             title: this.state.title,
             duration: this.state.duration,
@@ -214,7 +215,8 @@ export default class Create extends Component {
             tags: this.state.tags,
             type: "movie",
             allow_comments: this.state.allowComments ? 1 : 0,
-            is_first: this.state.first ? 1 : 0,
+            // is_first: this.state.first ? 1 : 0,
+            ranking_date: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
         };
 
         // console.log(data);
@@ -612,18 +614,18 @@ export default class Create extends Component {
 
                         <article className="flex flex-wrap gap-4">
                             {/*  is first */}
-                            <label className="label cursor-pointer space-x-2">
-                                <span className="label-text">Afficher En Premier</span>
-                                <input
-                                    type="checkbox"
-                                    checked={this.state.first}
-                                    value={this.state.first}
-                                    className="checkbox"
-                                    onChange={e => {
-                                        this.setState({first: e.target.checked});
-                                    }}
-                                />
-                            </label>
+                            {/*<label className="label cursor-pointer space-x-2">*/}
+                            {/*    <span className="label-text">Afficher En Premier</span>*/}
+                            {/*    <input*/}
+                            {/*        type="checkbox"*/}
+                            {/*        checked={this.state.first}*/}
+                            {/*        value={this.state.first}*/}
+                            {/*        className="checkbox"*/}
+                            {/*        onChange={e => {*/}
+                            {/*            this.setState({first: e.target.checked});*/}
+                            {/*        }}*/}
+                            {/*    />*/}
+                            {/*</label>*/}
 
                             {/*  allowComments */}
                             <label className="label cursor-pointer space-x-2">

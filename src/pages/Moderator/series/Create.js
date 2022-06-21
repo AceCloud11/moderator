@@ -152,6 +152,7 @@ export default class Create extends Component {
   }
 
   handleSubmit = async (img) => {
+    let date = new Date();
     const data = {
       title: `${this.state.title} Season ${this.state.season}`,
       origin: this.state.origin,
@@ -165,10 +166,11 @@ export default class Create extends Component {
       lang: this.state.language,
       season: parseInt(this.state.season),
       allow_comments: this.state.allowComments ? 1 : 0,
-      is_first: this.state.start ? 1 : 0,
+      // is_first: this.state.start ? 1 : 0,
       is_approved: 0,
       tags: this.state.tags,
       type: "serie",
+      ranking_date: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
     };
 
     // console.log(data);
@@ -530,18 +532,18 @@ export default class Create extends Component {
 
             <article className="flex flex-wrap gap-4">
               {/*  is first */}
-              <label className="label cursor-pointer space-x-2">
-                <span className="label-text">Afficher En Premier</span>
-                <input
-                    type="checkbox"
-                    checked={this.state.first}
-                    value={this.state.first}
-                    className="checkbox"
-                    onChange={e => {
-                      this.setState({ first: e.target.checked });
-                    }}
-                />
-              </label>
+              {/*<label className="label cursor-pointer space-x-2">*/}
+              {/*  <span className="label-text">Afficher En Premier</span>*/}
+              {/*  <input*/}
+              {/*      type="checkbox"*/}
+              {/*      checked={this.state.first}*/}
+              {/*      value={this.state.first}*/}
+              {/*      className="checkbox"*/}
+              {/*      onChange={e => {*/}
+              {/*        this.setState({ first: e.target.checked });*/}
+              {/*      }}*/}
+              {/*  />*/}
+              {/*</label>*/}
 
               {/*  approved */}
               <label className="label cursor-pointer space-x-2">

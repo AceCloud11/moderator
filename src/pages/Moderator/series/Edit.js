@@ -42,6 +42,7 @@ class Edit extends Component {
             approved: false,
             isLocal: false,
             file: null,
+            ranking_date: null,
         };
     }
 
@@ -125,7 +126,8 @@ class Edit extends Component {
             is_approved: this.state.approved,
             tags: this.state.tags,
             type: "serie",
-            latest_ep: this.state.latest_ep
+            latest_ep: this.state.latest_ep,
+           ranking_date: this.state.ranking_date,
         };
         // console.log(data);
         // return null;
@@ -170,6 +172,7 @@ class Edit extends Component {
                     first: false,
                     allowComments: false,
                     approved: false,
+                    ranking_date: null,
                 });
 
                 window.location.href = "/moderator/series";
@@ -236,8 +239,9 @@ class Edit extends Component {
                     season: res.data.season,
                     latest_ep: res.data.latest_ep,
                     allowComments: res.data.allow_comments,
-                    first: res.data.is_first,
-                    approved: res.data.is_approved
+                    // first: res.data.is_first,
+                    approved: res.data.is_approved,
+                    ranking_date: res.data.ranking_date
                 });
                 // console.log(this.state.categories);
             })
@@ -286,7 +290,7 @@ class Edit extends Component {
                         <article className="flex flex-wrap gap-4">
                             {/*  is first */}
                             <label className="label cursor-pointer space-x-2">
-                                <span className="label-text">Afficher En Premier</span>
+                                <span className="label-text">Changer la date</span>
                                 <input
                                     type="checkbox"
                                     checked={this.state.first}
@@ -312,6 +316,20 @@ class Edit extends Component {
                                 />
                             </label>
                         </article>
+
+                        {
+                            this.state.first ?
+                                (
+                                    <article>
+                                        <div className='w-full'>
+                                            <input type="date" value={this.state.ranking_date}
+                                                    onChange={e => this.setState({ ranking_date: e.target.value})}
+                                                   className="w-full p-2 mt-2 rounded-md border-2 border-gray-300"/>
+                                        </div>
+                                    </article>
+                                )
+                                : null
+                        }
                     </fieldset>
 
                     <div className="flex gap-4">
