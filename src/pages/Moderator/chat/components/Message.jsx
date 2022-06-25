@@ -59,7 +59,7 @@ export default function Message({ msg, fetch, isMine }){
                                     : null
                             }
                             <span className={`block text-xs text-slate-300 ${isMine === 'true' ? '' : 'pt-2'}`}>
-                                {msg.username}
+                                {msg.user.username}
                             </span>
                             <span className="block">
                             {msg.text}
@@ -82,7 +82,7 @@ export default function Message({ msg, fetch, isMine }){
                 <div
                     className="bg-blue-500 flex items-center justify-center"
                     style={{ width: 30, height: 30, borderRadius: "50%" }}
-                    title={msg.username}
+                    title={msg.user.username}
                 >
                     <div className="text-white font-bold">
                         {msg.avatar ? (

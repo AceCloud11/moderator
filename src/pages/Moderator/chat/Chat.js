@@ -35,6 +35,7 @@ export default function Chat() {
         },
       })
       .then(async (res) => {
+        console.log(res)
         await setUser({
           username: res.data.username,
           email: res.data.email,
@@ -71,7 +72,7 @@ export default function Chat() {
     })
       .then((res) => {
         res.data.messages.forEach(el => {
-          el.bg = getRandomColor(el.username);
+          el.bg = getRandomColor(el.user.username);
         });
         // console.log(res.data.messages);
         setMessages(res.data.messages.reverse());
@@ -187,7 +188,7 @@ export default function Chat() {
             ) : null}
             {messages.length
                 ? messages.map((msg) =>
-                    msg.username === user.username ? (
+                    msg.user.username === user.username ? (
                         <Message msg={msg} fetch={fetchMessages} isMine="true"/>
                     ) : (
                         <Message msg={msg} fetch={fetchMessages} isMine="false"/>
